@@ -1,0 +1,3 @@
+content   imconverter resources/imconverter/data/chrome/content/
+skin      imconverter classic/1.0 resources/imconverter/data/chrome/skin/classic/
+locale    imconverter en-US resources/imconverter/data/chrome/locale/en-US/

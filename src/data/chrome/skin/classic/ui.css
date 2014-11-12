@@ -1,0 +1,19 @@
+#tabs {
+  width: 200px;
+}
+@media (min-height: 230px) {
+  #tabs {
+    background: url('icon.png') no-repeat center bottom 25px;
+  }
+}
+
+#tabs button[active] {
+  font-weight: bold;
+}
+
+#statusbar {
+  margin: 2px;
+  color: InfoText;
+  border: solid 1px ThreeDShadow;
+  height: 18px;
+}

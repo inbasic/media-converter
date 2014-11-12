@@ -1,0 +1,128 @@
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://imconverter/skin/ui.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://imconverter/locale/ui.dtd">
+
+<window 
+  id="converter-ui" 
+  title="&title;"
+  width="650px"
+  height="300px"
+  persist="width height screenX screenY sizemode"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+  xmlns:html="http://www.w3.org/1999/xhtml" 
+  xmlns:h="http://www.w3.org/1999/xhtml"
+  ondragenter="return drag.checkDrag(event)"
+  ondragover="return drag.checkDrag(event)"
+  ondrop="drag.doDrop(event)"
+  >
+  
+<notificationbox flex="1">
+<hbox id="progress" align="center">
+  <label value="[0]"/>
+  <progressmeter mode="determined" flex="1"/>
+</hbox>
+<hbox flex="1">
+  <vbox id="tabs">
+    <button label="&tab0.label;" accesskey="&tab0.accesskey;"/>
+    <button label="&tab1.label;" accesskey="&tab1.accesskey;"/>
+    <button label="&tab2.label;" accesskey="&tab2.accesskey;"/>
+    <separator class="groove"/>
+    <button label="&tab3.label;" accesskey="&tab3.accesskey;"/>
+  </vbox>
+
+  <tabpanels id="tabpanels" flex="1">
+    <!-- MP3 Converter -->
+    <tabpanel orient="vertical" id="toMP3">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <radiogroup>
+        <groupbox>
+        <caption label="&quality;"/>
+        <grid>
+          <columns>
+            <column/>
+            <column flex="1"/>
+          </columns>
+          <rows>
+            <row>
+              <radio id="violet" label="&vbr;"/>
+              <menulist>
+                <menupopup>
+                  <menuitem label="245 KB/s" selected="true"/>
+                  <menuitem label="225 KB/s"/>
+                  <menuitem label="190 KB/s"/>
+                  <menuitem label="175 KB/s"/>
+                  <menuitem label="165 KB/s"/>
+                  <menuitem label="130 KB/s"/>
+                  <menuitem label="115 KB/s"/>
+                  <menuitem label="100 KB/s"/>
+                  <menuitem label="85 KB/s"/>
+                </menupopup>
+              </menulist>
+            </row>
+            <row>
+              <radio id="violet" label="&cbr;"/>
+              <menulist>
+                <menupopup>
+                  <menuitem label="320 KB/s" value="320"/>
+                  <menuitem label="192 KB/s" value="192" selected="true"/>
+                  <menuitem label="128 KB/s" value="128"/>
+                  <menuitem label="96 KB/s" value="96"/>
+                  <menuitem label="32 KB/s" value="32"/>
+                </menupopup>
+              </menulist>
+            </row>
+          </rows>
+        </grid>
+        </groupbox>
+      </radiogroup>
+      <hbox flex="1" pack="center" align="center">
+        <label value="&drag1;"/>
+      </hbox>
+    </tabpanel>
+    <!-- Audio Extractor -->
+    <tabpanel orient="vertical" id="toAudio">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox flex="1" pack="center" align="center">
+        <label value="&drag1;"/>
+      </hbox>
+    </tabpanel>
+    <!-- Audio and Video Combiner -->
+    <tabpanel orient="vertical" id="toCombined">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox flex="1" pack="center" align="center">
+        <label value="&drag2;"/>
+      </hbox>
+    </tabpanel>
+    <!-- Settings -->
+    <tabpanel orient="vertical" id="ffmpeg">
+      <hbox align="center">
+        <label value="&tabpanel3.label1;"/>
+        <textbox emptytext="&tabpanel3.label2;" flex="1"/>
+        <button data-type="browse" label="&browse;"/>
+      </hbox>
+      <spacer flex="1"/>
+      <hbox>
+        <button data-type="settings" label="&moresettings;"/>
+      </hbox>
+    </tabpanel>
+  </tabpanels>
+</hbox>
+<hbox id="statusbar" align="center">
+  <label pack="center" flex="1" crop="center"/>
+</hbox>
+
+<script type='application/javascript' src="ui.js"/>
+</notificationbox>
+</window>

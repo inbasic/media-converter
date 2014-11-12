@@ -1,0 +1,48 @@
+{
+  "name": "imconverter",
+  "title": "Media Converter and Muxer",
+  "id": "jid1-kps5PrGBNtzSLQ",
+  "description": "Easy to use video and audio converter and muxer",
+  "author": "",
+  "license": "MPL 2.0",
+  "version": "0.1.1b2",
+  "permissions": {
+    "private-browsing": true
+  },
+  "preferences": [{
+    "name": "hotkey",
+    "title": "",
+    "description": "",
+    "type": "string",
+    "value": "accel-shift-n"
+  },
+  {
+    "type": "file",
+    "name": "ffmpeg",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "toMP3",
+    "value": "-y -i %input %quality %output.mp3",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "toAudio",
+    "value": "-y -i %input -acodec copy -vn %output",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "toCombined",
+    "value": "-y -i %audio -i %video -c copy %output",
+    "title": ""
+  },
+  {
+    "name": "welcome",
+    "title": "",
+    "type": "bool",
+    "value": true
+  }]
+}
