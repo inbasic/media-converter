@@ -19,9 +19,9 @@ To compile imconverter project you need to have these softwares and libraries av
 1. Open a new terminal in the root dir (directory contains src, preview, template, and compile folders)
 2. Run ``npm install`` to acquire the necessary nodejs packages
 3. Run ``node compile/install.js`` to run imconverter in a new Firefox profile
-   To make the xpi run ``node compile/install.js --xpi``
-   To make the xpi and install the extension in your current profile run ``node compile/install.js --wget``
-   For more options use ``node compile/install.js --help``
+  To make the xpi run ``node compile/install.js --xpi``
+  To make the xpi and install the extension in your current profile run ``node compile/install.js --wget``
+  For more options use ``node compile/install.js --help``
 
 ###How to try precompiled latest version
 1. Select the right branch
