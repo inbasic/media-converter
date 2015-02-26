@@ -195,7 +195,7 @@ var drag = {
   checkDrag: function (event) {
     if ((+$("progressmeter").value) === 0 && panel.getId() !== "ffmpeg") {
       var isFile = event.dataTransfer.types.contains("application/x-moz-file");
-      var isURL = event.dataTransfer.getData("URL");
+      var isURL = event.dataTransfer.getData("URL") || event.dataTransfer.getData("text/x-moz-url");
       if (isFile || isURL) {
         event.preventDefault();
       }
@@ -214,7 +214,7 @@ var drag = {
       conversions(files);
     }
     else {
-      var link = event.dataTransfer.getData("URL");
+      var link = event.dataTransfer.getData("URL") || event.dataTransfer.getData("text/x-moz-url");
       download(link);
     }
   }
@@ -302,6 +302,35 @@ $("#toCombined button").addEventListener("command", function () {
 }, false);
 $("#toCombined textbox").value = prefs.toCombined || "";
 
+// volume
+$("#volume textbox").addEventListener("change", function () {
+  prefs.volume = this.value;
+}, false);
+$("#volume scale").addEventListener("change", function () {
+  $("#volume-percent").value = (this.value / 10 * 100).toFixed(0) + "%";
+}, false);
+$("#volume button").addEventListener("command", function () {
+  background.utils.reset("volume");
+  $("#volume textbox").value = prefs.volume;
+}, false);
+$("#volume textbox").value = prefs.volume || "";
+
+// scale
+$("#scale textbox").addEventListener("change", function () {
+  prefs.scale = this.value;
+}, false);
+$("#multiply-by-scale").addEventListener("change", function () {
+  $("#multiply-by-label").value = this.value;
+}, false);
+$("#divide-by-scale").addEventListener("change", function () {
+  $("#divide-by-label").value = this.value;
+}, false);
+$("#scale button").addEventListener("command", function () {
+  background.utils.reset("scale");
+  $("#scale textbox").value = prefs.scale;
+}, false);
+$("#scale textbox").value = prefs.scale || "";
+
 //ffmpeg
 $("#ffmpeg textbox").addEventListener("change", function () {
   prefs.ffmpeg = this.value;
@@ -341,6 +370,8 @@ var conversions = (function () {
     switch (action) {
     case "toMP3":
     case "toAudio":
+    case "volume":
+    case "scale":
       function doOne () {
         var file = files.shift();
         log.emit("change", l10n("workingon") + " " + file.path);
@@ -367,7 +398,14 @@ var conversions = (function () {
         }
         callback.quality = quality;
         callback.audio = file.path;
-        connect.remote.register(action == "toMP3" ? "mp3-conversion" : "audio-muxing", callback);
+        callback.level = $("#volume scale").value / 10;
+        callback.divide = $("#divide-by-scale").value;
+        callback.multiply = $("#multiply-by-scale").value;
+
+        connect.remote.register(
+          ["mp3-conversion", "audio-muxing", "volume-adjusting", "scale-video"][["toMP3", "toAudio", "volume", "scale"].indexOf(action)],
+          callback
+        );
       }
       doOne();
       break;
@@ -415,7 +453,7 @@ var download = (function () {
       callback.url = link;
       progress.emit("register", "download");
       callback.listener = {
-        progress: p => progress.emit("toCombined", p),
+        progress: p => progress.emit("download", p),
         done: function (dl) {
           progress.emit("remove", "download");
           conversions([file]);

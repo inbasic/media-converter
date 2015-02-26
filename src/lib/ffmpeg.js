@@ -220,6 +220,9 @@ function knownErrors (str) {
   if (str.indexOf("does not contain any stream") !== -1) {
     return "Input does not contain any stream.";
   }
+  if (str.indexOf("maybe incorrect parameters such as bit_rate, rate, width or height") !== -1) {
+    return "Cannot scale to this ratio, please change the scale parameters.";
+  }
   console.error(str);
   return null;
 }
@@ -252,7 +255,7 @@ exports.toMP3 = function (input, output, quality, listener) {
   if (listener) {
     Object.defineProperty(listener, "abort", {
       get: function() {
-        return internal.abort || function (){};
+        return internal.abort || listener.abort || function (){};
       }
     });
   }
@@ -295,7 +298,7 @@ exports.toAudio = function (input, output, listener) {
   if (listener) {
     Object.defineProperty(listener, "abort", {
       get: function() {
-        return internal.abort || function (){};
+        return internal.abort || listener.abort || function (){};
       }
     });
   }
@@ -350,7 +353,7 @@ exports.toCombined = function (audio, video, output, listener) {
   if (listener) {
     Object.defineProperty(listener, "abort", {
       get: function() {
-        return internal.abort || function (){};
+        return internal.abort || listener.abort || function (){};
       }
     });
   }
@@ -382,5 +385,85 @@ exports.toCombined = function (audio, video, output, listener) {
     var stderr = perct ? perct.data : result.stderr;
     var tmp = knownErrors(stderr);
     throw Error(tmp ? 'ffmpeg.js -> toCombined -> ' + tmp : 'check error console for the complete error report');
+  });
+}
+
+exports.volume = function (input, output, level = 1, listener) {
+  if (!utils.file.exists(input)) {
+    return Promise.reject(Error('ffmpeg.js -> volume -> file does not exist'));
+  }
+
+  var internal, perct;
+  // attaching abort to the external listener
+  if (listener) {
+    Object.defineProperty(listener, "abort", {
+      get: function() {
+        return internal.abort || listener.abort || function (){};
+      }
+    });
+  }
+  if (listener && listener.progress) {
+    perct = new percentage(listener.progress);
+    internal = {stderr: perct.step}
+  }
+
+  var ext = getExtension(input);
+  output = output || input;
+  output = utils.file.checkDuplicate(output);
+
+  var args = utils.prefs.volume.split(/\s+/).map(function (s) {
+    return s.replace("%input", input)
+      .replace(/\%output[\.\w]*/, output)
+      .replace("%level", level)
+  });
+  return new execute(args, internal)
+  .then(function (result) {
+    if (result.exitCode === 0) {
+      return true;
+    }
+    var stderr = perct ? perct.data : result.stderr;
+    var tmp = knownErrors(stderr);
+    throw Error(tmp ? 'ffmpeg.js -> volume -> ' + tmp : 'check error console for the complete error report');
+  });
+}
+
+exports.scale = function (input, output, divide = 1, multiply = 1, listener) {
+  console.error(input)
+  if (!utils.file.exists(input)) {
+    return Promise.reject(Error('ffmpeg.js -> scale -> file does not exist'));
+  }
+
+  var internal, perct;
+  // attaching abort to the external listener
+  if (listener) {
+    Object.defineProperty(listener, "abort", {
+      get: function() {
+        return internal.abort || listener.abort || function (){};
+      }
+    });
+  }
+  if (listener && listener.progress) {
+    perct = new percentage(listener.progress);
+    internal = {stderr: perct.step}
+  }
+
+  var ext = getExtension(input);
+  output = output || input;
+  output = utils.file.checkDuplicate(output);
+
+  var args = utils.prefs.scale.split(/\s+/).map(function (s) {
+    return s.replace("%input", input)
+      .replace(/\%output[\.\w]*/, output)
+      .replace("%divide", divide)
+      .replace("%multiply", multiply)
+  });
+  return new execute(args, internal)
+  .then(function (result) {
+    if (result.exitCode === 0) {
+      return true;
+    }
+    var stderr = perct ? perct.data : result.stderr;
+    var tmp = knownErrors(stderr);
+    throw Error(tmp ? 'ffmpeg.js -> scale -> ' + tmp : 'check error console for the complete error report');
   });
 }

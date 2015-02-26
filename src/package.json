@@ -5,7 +5,7 @@
   "description": "Easy to use video and audio converter and muxer",
   "author": "",
   "license": "MPL 2.0",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "permissions": {
     "private-browsing": true
   },
@@ -37,6 +37,18 @@
     "type": "string",
     "name": "toCombined",
     "value": "-y -i %audio -i %video -c copy %output",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "volume",
+    "value": "-y -i %input -af volume=%level -strict -2 %output",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "scale",
+    "value": "-y -i %input -vf scale=iw*%multiply/%divide:-1 -async 1 -strict -2 %output",
     "title": ""
   },
   {

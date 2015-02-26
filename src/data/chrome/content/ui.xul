@@ -2,20 +2,20 @@
 <?xml-stylesheet href="chrome://imconverter/skin/ui.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://imconverter/locale/ui.dtd">
 
-<window 
-  id="converter-ui" 
+<window
+  id="converter-ui"
   title="&title;"
   width="650px"
-  height="300px"
+  height="500px"
   persist="width height screenX screenY sizemode"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-  xmlns:html="http://www.w3.org/1999/xhtml" 
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:h="http://www.w3.org/1999/xhtml"
   ondragenter="return drag.checkDrag(event)"
   ondragover="return drag.checkDrag(event)"
   ondrop="drag.doDrop(event)"
   >
-  
+
 <notificationbox flex="1">
 <hbox id="progress" align="center">
   <label value="[0]"/>
@@ -26,6 +26,8 @@
     <button label="&tab0.label;" accesskey="&tab0.accesskey;"/>
     <button label="&tab1.label;" accesskey="&tab1.accesskey;"/>
     <button label="&tab2.label;" accesskey="&tab2.accesskey;"/>
+    <button label="&tab4.label;" accesskey="&tab4.accesskey;"/>
+    <button label="&tab5.label;" accesskey="&tab5.accesskey;"/>
     <separator class="groove"/>
     <button label="&tab3.label;" accesskey="&tab3.accesskey;"/>
   </vbox>
@@ -103,6 +105,43 @@
       </hbox>
       <hbox flex="1" pack="center" align="center">
         <label value="&drag2;"/>
+      </hbox>
+    </tabpanel>
+    <!-- Volume adjustment -->
+    <tabpanel orient="vertical" id="volume">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox align="center">
+        <label value="&volume;"></label>
+        <scale min="1" max="20" value="12" flex="1"/>
+        <label id="volume-percent" value="120%"/>
+      </hbox>
+      <hbox flex="1" pack="center" align="center">
+        <label value="&drag1;"/>
+      </hbox>
+    </tabpanel>
+    <!-- Scale video -->
+    <tabpanel orient="vertical" id="scale">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox align="center">
+        <label value="&divide-by;"></label>
+        <scale id="divide-by-scale" min="1" max="10" value="2" flex="1"/>
+        <label id="divide-by-label" value="2"/>
+      </hbox>
+      <hbox align="center">
+        <label value="&multiply-by;"></label>
+        <scale id="multiply-by-scale" min="1" max="10" value="1" flex="1"/>
+        <label id="multiply-by-label" value="1"/>
+      </hbox>
+      <hbox flex="1" pack="center" align="center">
+        <label value="&drag1;"/>
       </hbox>
     </tabpanel>
     <!-- Settings -->

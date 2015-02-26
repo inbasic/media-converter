@@ -7,15 +7,22 @@
 <!ENTITY tab2.accesskey "C">
 <!ENTITY tab3.label "Settings">
 <!ENTITY tab3.accesskey "S">
+<!ENTITY tab4.label "Volume Adjuster">
+<!ENTITY tab4.accesskey "V">
+<!ENTITY tab5.label "Video Scaler">
+<!ENTITY tab5.accesskey "S">
 <!ENTITY tabpanel3.label1 "Extractor Engine:">
 <!ENTITY tabpanel3.label2 "FFmpeg(.exe) Location">
 <!ENTITY browse "Browse...">
 <!ENTITY reset.label "Reset">
 <!ENTITY reset.accesskey "R">
 <!ENTITY input.arguments "Conversion command:">
-<!ENTITY drag1 "Drag and drop video/audio files here">
-<!ENTITY drag2 "Drag and drop a video and an audio files here">
+<!ENTITY drag1 "Drag and drop video/audio files or a single downloadable link here. Outputs will be placed in the same folder.">
+<!ENTITY drag2 "Drag and drop a video and an audio files here. The combined video file will be placed in the same folder.">
 <!ENTITY quality "Quality">
 <!ENTITY vbr "Variable bitrate">
 <!ENTITY cbr "Constant bitrate">
 <!ENTITY moresettings "More settings ...">
+<!ENTITY volume "Change volume in percent:">
+<!ENTITY divide-by "Divide video screen by:">
+<!ENTITY multiply-by "Multiply video screen by:">
