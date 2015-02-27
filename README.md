@@ -28,3 +28,8 @@ To compile imconverter project you need to have these softwares and libraries av
 2. Browse the src directory
 3. Download the raw *.xpi file
 4. Drag and drop it into Firefox
+
+
+###For developers
+You can connect to imconverter extension and do conversions in background from your extension
+https://github.com/inbasic/media-converter/blob/master/connect.md
