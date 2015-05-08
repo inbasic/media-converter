@@ -69,11 +69,11 @@
               <radio id="violet" label="&cbr;"/>
               <menulist>
                 <menupopup>
-                  <menuitem label="320 KB/s" value="320"/>
-                  <menuitem label="192 KB/s" value="192" selected="true"/>
-                  <menuitem label="128 KB/s" value="128"/>
-                  <menuitem label="96 KB/s" value="96"/>
-                  <menuitem label="32 KB/s" value="32"/>
+                  <menuitem label="320 KB/s" value="320k"/>
+                  <menuitem label="192 KB/s" value="192k" selected="true"/>
+                  <menuitem label="128 KB/s" value="128k"/>
+                  <menuitem label="96 KB/s" value="96k"/>
+                  <menuitem label="32 KB/s" value="32k"/>
                 </menupopup>
               </menulist>
             </row>
