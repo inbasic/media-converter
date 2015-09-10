@@ -15,6 +15,7 @@ var background = (function () {
   var main = extensionScope.loader.sandboxes[root + 'lib/main.js'];
   return main;
 })();
+
 var prefs = background.utils.prefs;
 var event = background.utils.event;
 var l10n = background.utils.l10n;
@@ -349,7 +350,7 @@ $('#scale textbox').addEventListener('change', function () {
     prefs.mbscale = mbscale.value + '';
     $('#multiply-by-label').value = mbscale.value;
   });
-  mbscale.value = prefs.mbscale || '12';
+  mbscale.value = prefs.mbscale || '2';
   var evt = document.createEvent('Events');
   evt.initEvent('change', true, true);
   mbscale.dispatchEvent(evt);
@@ -359,7 +360,7 @@ $('#scale textbox').addEventListener('change', function () {
     prefs.dbscale = dbscale.value + '';
     $('#divide-by-label').value = dbscale.value;
   });
-  dbscale.value = prefs.dbscale || '12';
+  dbscale.value = prefs.dbscale || '1';
   var evt = document.createEvent('Events');
   evt.initEvent('change', true, true);
   dbscale.dispatchEvent(evt);
@@ -369,6 +370,38 @@ $('#scale button').addEventListener('command', function () {
   $('#scale textbox').value = prefs.scale;
 }, false);
 $('#scale textbox').value = prefs.scale || '';
+
+//rotate
+$('#rotate textbox').addEventListener('change', function () {
+  prefs.rotate = this.value;
+}, false);
+$('#rotate button').addEventListener('command', function () {
+  background.utils.reset('rotate');
+  $('#rotate textbox').value = prefs.rotate;
+}, false);
+$('#rotate textbox').value = prefs.rotate || '';
+(function (vora) {
+  vora.selectedIndex = prefs.vora || 0;
+  vora.addEventListener('select', function () {
+    prefs.vora = vora.selectedIndex;
+  });
+})($('#rotate radiogroup'));
+
+//shift
+$('#shift textbox').addEventListener('change', function () {
+  prefs.shift = this.value;
+}, false);
+$('#shift button').addEventListener('command', function () {
+  background.utils.reset('shift');
+  $('#shift textbox').value = prefs.shift;
+}, false);
+$('#shift textbox').value = prefs.shift || '';
+(function (forward) {
+  forward.selectedIndex = prefs.forward || 0;
+  forward.addEventListener('select', function () {
+    prefs.forward = forward.selectedIndex;
+  });
+})($('#shift radiogroup'));
 
 //ffmpeg
 $('#ffmpeg textbox').addEventListener('change', function () {
@@ -411,6 +444,8 @@ var conversions = (function () {
     case 'toAudio':
     case 'volume':
     case 'scale':
+    case 'rotate':
+    case 'shift':
       function doOne () {
         var file = files.shift();
         log.emit('change', l10n('workingon') + ' ' + file.path);
@@ -435,7 +470,14 @@ var conversions = (function () {
         else {  //Non VBR
           quality = '-b:a ' + $('#toMP3 radiogroup').getElementsByTagName('menulist')[1].selectedItem.value;
         }
+        var angle = ['90', '180', '270'][$('#rotate radiogroup').selectedIndex];
+        var direction = ['v', 'a'][$('#shift radiogroup').selectedIndex];
+        var shift = $('#shift radiogroup').parentNode.querySelector('textbox').value;
+
         callback.quality = quality;
+        callback.angle = angle;
+        callback.direction = direction;
+        callback.shift = shift;
         callback.audio = file.path;
         callback.level = $('#volume scale').value / 10;
         callback.divide = $('#divide-by-scale').value;
@@ -445,8 +487,10 @@ var conversions = (function () {
             'mp3-conversion',
             'audio-muxing',
             'volume-adjusting',
-            'scale-video'
-          ][['toMP3', 'toAudio', 'volume', 'scale'].indexOf(action)],
+            'scale-video',
+            'rotate-video',
+            'shift-video-or-audio'
+          ][['toMP3', 'toAudio', 'volume', 'scale', 'rotate', 'shift'].indexOf(action)],
           callback
         );
       }
@@ -462,16 +506,7 @@ var conversions = (function () {
           handleError(result);
         }
         files = files.sort(function (f1) {
-          if (
-            f1.path.match(/[^\.\/\\]*$/).toString().toLowerCase() === 'm4a' ||
-            f1.path.match(/[^\.\/\\]*$/).toString().toLowerCase() === 'ogg' ||
-            f1.path.match(/[^\.\/\\]*$/).toString().toLowerCase() === 'opus'
-          ) {
-            return 1;
-          }
-          else {
-            return -1;
-          }
+          return /\.(m4a|ogg|opus)$/i.test(f1.path) ? 1 : -1;
         });
         callback.listener = {
           progress: p => progress.emit('toCombined', p)
@@ -492,6 +527,9 @@ var conversions = (function () {
 
 var download = (function () {
   return function (link) {
+    if (link.indexOf('youtube.com/watch') !== -1) {
+      return alert(l10n('msg.nodownloader'))
+    }
     var file = background.utils.file.browse(null, 'save');
     function callback () {}
     if (file) {

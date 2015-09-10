@@ -28,6 +28,8 @@
     <button label="&tab2.label;" accesskey="&tab2.accesskey;"/>
     <button label="&tab4.label;" accesskey="&tab4.accesskey;"/>
     <button label="&tab5.label;" accesskey="&tab5.accesskey;"/>
+    <button label="&tab6.label;" accesskey="&tab6.accesskey;"/>
+    <button label="&tab7.label;" accesskey="&tab7.accesskey;"/>
     <separator class="groove"/>
     <button label="&tab3.label;" accesskey="&tab3.accesskey;"/>
   </vbox>
@@ -50,7 +52,7 @@
           </columns>
           <rows>
             <row>
-              <radio id="violet" label="&vbr;"/>
+              <radio label="&vbr;"/>
               <menulist>
                 <menupopup>
                   <menuitem label="245 KB/s" selected="true"/>
@@ -66,7 +68,7 @@
               </menulist>
             </row>
             <row>
-              <radio id="violet" label="&cbr;"/>
+              <radio label="&cbr;"/>
               <menulist>
                 <menupopup>
                   <menuitem label="320 KB/s" value="320k"/>
@@ -81,9 +83,10 @@
         </grid>
         </groupbox>
       </radiogroup>
-      <hbox flex="1" pack="center" align="center">
-        <label value="&drag1;"/>
-      </hbox>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
     </tabpanel>
     <!-- Audio Extractor -->
     <tabpanel orient="vertical" id="toAudio">
@@ -92,9 +95,10 @@
         <textbox flex="1"/>
         <button label="&reset.label;" accesskey="&reset.accesskey;"/>
       </hbox>
-      <hbox flex="1" pack="center" align="center">
-        <label value="&drag1;"/>
-      </hbox>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
     </tabpanel>
     <!-- Audio and Video Combiner -->
     <tabpanel orient="vertical" id="toCombined">
@@ -103,9 +107,10 @@
         <textbox flex="1"/>
         <button label="&reset.label;" accesskey="&reset.accesskey;"/>
       </hbox>
-      <hbox flex="1" pack="center" align="center">
+      <vbox flex="1" pack="center" align="center">
         <label value="&drag2;"/>
-      </hbox>
+        <label value="&note1;"/>
+      </vbox>
     </tabpanel>
     <!-- Volume adjustment -->
     <tabpanel orient="vertical" id="volume">
@@ -119,9 +124,10 @@
         <scale min="1" max="20" value="12" flex="1"/>
         <label id="volume-percent" value="120%"/>
       </hbox>
-      <hbox flex="1" pack="center" align="center">
-        <label value="&drag1;"/>
-      </hbox>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
     </tabpanel>
     <!-- Scale video -->
     <tabpanel orient="vertical" id="scale">
@@ -140,9 +146,46 @@
         <scale id="multiply-by-scale" min="1" max="10" value="1" flex="1"/>
         <label id="multiply-by-label" value="1"/>
       </hbox>
-      <hbox flex="1" pack="center" align="center">
-        <label value="&drag1;"/>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
+    </tabpanel>
+    <!-- Rotate -->
+    <tabpanel orient="vertical" id="rotate">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
       </hbox>
+      <radiogroup>
+        <radio label="&rotate-90;"/>
+        <radio label="&rotate-180;"/>
+        <radio label="&rotate-270;"/>
+      </radiogroup>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
+    </tabpanel>
+    <!-- Time Shift -->
+    <tabpanel orient="vertical" id="shift">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox align="center">
+        <radiogroup>
+          <radio label="&video-forward;"/>
+          <radio label="&audio-forward;"/>
+        </radiogroup>
+        <textbox flex="1" value="00:00:03.0"/>
+      </hbox>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
     </tabpanel>
     <!-- Settings -->
     <tabpanel orient="vertical" id="ffmpeg">

@@ -55,12 +55,19 @@ exports.event = function (obj) {
 
   return obj;
 }
+var exportsHelper = {};
+
 /* root */
-XPCOMUtils.defineLazyGetter(exports, "root", function () {
+XPCOMUtils.defineLazyGetter(exportsHelper, "root", function () {
   var os = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime).OS;
 
   return {
     os: os
+  }
+});
+Object.defineProperty(exports, 'root', {
+  get: function () {
+    return exportsHelper.root;
   }
 });
 
@@ -92,7 +99,7 @@ exports.reset = function (name) {
   prefService.reset(['extensions', self.id, name].join('.'));
 };
 /* file */
-XPCOMUtils.defineLazyGetter(exports, "file", function () {
+XPCOMUtils.defineLazyGetter(exportsHelper, "file", function () {
   Cu.import("resource://gre/modules/FileUtils.jsm");
   function toFile (path) {
     return new FileUtils.File(path);
@@ -123,8 +130,14 @@ XPCOMUtils.defineLazyGetter(exports, "file", function () {
     nsIFile: Ci.nsIFile
   }
 });
+Object.defineProperty(exports, 'file', {
+  get: function () {
+    return exportsHelper.file;
+  }
+});
+
 /* notification */
-XPCOMUtils.defineLazyGetter(exports, "notify", function () {
+XPCOMUtils.defineLazyGetter(exportsHelper, "notify", function () {
   var alertServ;
   try {
     alertServ = Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService);
@@ -149,9 +162,14 @@ XPCOMUtils.defineLazyGetter(exports, "notify", function () {
         notificationBox.PRIORITY_INFO_MEDIUM,
         []
       );
-      timer.setTimeout(function() {
+      timer.setTimeout(function () {
         notification.close();
       }, config.durations.notification);
     }
+  }
+});
+Object.defineProperty(exports, 'notify', {
+  get: function () {
+    return exportsHelper.notify;
   }
 });

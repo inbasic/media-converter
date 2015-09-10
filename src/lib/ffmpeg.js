@@ -58,10 +58,8 @@ exports.checkFFmpeg = function () {
     return isValidSize(file);
   }
   return exports.find().then(function (path) {
-    console.error(path);
     var file = utils.file.absolutePath(path);
     return isValidSize(file).then(function () {
-      console.error(path);
       utils.prefs.ffmpeg = path;
       return path;
     });
@@ -141,7 +139,7 @@ utils.XPCOMUtils.defineLazyGetter(exports, 'install', function () {
           }
           url = url[0].replace(/\&amp\;/g, '&');
 
-          file.create(utils.file.nsIFile.NORMAL_FILE_TYPE, 755);
+          file.create(utils.file.nsIFile.NORMAL_FILE_TYPE, 777);
           var internal = {
             progress: function (p) {
               if (listener && listener.progress) {
@@ -485,5 +483,83 @@ exports.scale = function (input, output, divide = 1, multiply = 1, listener) {
     var stderr = perct ? perct.data : result.stderr;
     var tmp = knownErrors(stderr);
     throw Error(tmp ? 'ffmpeg.js -> scale -> ' + tmp : 'check error console for the complete error report');
+  });
+};
+
+exports.shift = function (input, output, shift, direction, listener) {
+  if (!utils.file.exists(input)) {
+    return Promise.reject(Error('ffmpeg.js -> shift -> file does not exist'));
+  }
+
+  var internal, perct;
+  // attaching abort to the external listener
+  if (listener) {
+    Object.defineProperty(listener, 'abort', {
+      get: function () {
+        return internal.abort || listener.abort || function () {};
+      }
+    });
+  }
+  if (listener && listener.progress) {
+    perct = new percentage(listener.progress);
+    internal = {stderr: perct.step};
+  }
+
+  output = output || input;
+  output = utils.file.checkDuplicate(output);
+
+  var args = utils.prefs.shift
+    .replace('%direction', direction === 'v' ? '-map 0:a -map 1:v' : '-map 0:v -map 1:a')
+    .split(/\s+/).map(function (s) {
+      return s.replace('%input', input)
+        .replace(/\%output[\.\w]*/, output)
+        .replace('%shift', shift);
+    });
+  return new execute(args, internal)
+  .then(function (result) {
+    if (result.exitCode === 0) {
+      return true;
+    }
+    var stderr = perct ? perct.data : result.stderr;
+    var tmp = knownErrors(stderr);
+    throw Error(tmp ? 'ffmpeg.js -> videoShift -> ' + tmp : 'check error console for the complete error report');
+  });
+};
+
+exports.rotate = function (input, output, angle, listener) {
+  if (!utils.file.exists(input)) {
+    return Promise.reject(Error('ffmpeg.js -> rotate -> file does not exist'));
+  }
+
+  var internal, perct;
+  // attaching abort to the external listener
+  if (listener) {
+    Object.defineProperty(listener, 'abort', {
+      get: function () {
+        return internal.abort || listener.abort || function () {};
+      }
+    });
+  }
+  if (listener && listener.progress) {
+    perct = new percentage(listener.progress);
+    internal = {stderr: perct.step};
+  }
+
+  output = output || input;
+  output = utils.file.checkDuplicate(output);
+
+  var args = utils.prefs.rotate.split(/\s+/).map(function (s) {
+    return s.replace('%input', input)
+      .replace(/\%output[\.\w]*/, output)
+      .replace('%angle', angle);
+  });
+  return new execute(args, internal)
+  .then(function (result) {
+    if (result.exitCode === 0) {
+      return true;
+    }
+    var stderr = perct ? perct.data : result.stderr;
+    var tmp = knownErrors(stderr);
+    throw Error(tmp ? 'ffmpeg.js -> rotate -> ' + tmp : 'check error console for the complete error report');
   });
 };

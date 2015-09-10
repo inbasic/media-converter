@@ -1,6 +1,8 @@
+'use strict';
+
 var utils          = require('./system/utils'),
     ffmpeg         = require('./ffmpeg'),
-    downloader     = require("./system/downloader"),
+    downloader     = require('./system/downloader'),
     hotkey         = require('./hotkey'),
     toolbarbutton  = require('./system/toolbarbutton'),
     config         = require('./config');
@@ -18,25 +20,25 @@ hotkey.install(onCommand);
 // Installing toolbarbutton
 toolbarbutton.install(onCommand);
 // init
-exports.main = function(options, callbacks) {
-  if (options.loadReason == "startup" || options.loadReason == "install") {
+exports.main = function (options) {
+  if (options.loadReason === 'startup' || options.loadReason === 'install') {
     welcome();
   }
-  if (options.loadReason == "enable") {
+  if (options.loadReason === 'enable') {
     utils.prefs.version =  utils.manifest.version;
   }
-}
+};
 exports.onUnload = function (reason) {
   // version pref is used by other addons to detect the existence of this extension
-  if (reason === "disable") {
-    utils.prefs.version = "";
+  if (reason === 'disable') {
+    utils.prefs.version = '';
   }
-}
+};
 // welcome page
 function welcome () {
   if (utils.prefs.welcome) {
     if (utils.prefs.version !== utils.manifest.version) {
-      var params = "v=" + utils.manifest.version + (utils.prefs.version ? "&p=" + utils.prefs.version + "&type=upgrade" : "&type=install");
+      var params = 'v=' + utils.manifest.version + (utils.prefs.version ? '&p=' + utils.prefs.version + '&type=upgrade' : '&type=install');
       utils.timer.setTimeout(function () {
         utils.windows.openHome(params);
       }, 1000);
@@ -46,11 +48,11 @@ function welcome () {
 }
 // APIs
 var connect = {};
-utils.import("shared/connect.jsm", connect);
+utils.import('shared/connect.jsm', connect);
 connect.remote.register = function (request, callback) {
-  callback = callback || function (){};
-  var audio = callback.audio || "",
-      video = callback.video || "",
+  callback = callback || function () {};
+  var audio = callback.audio || '',
+      video = callback.video || '',
       output = callback.output || null,
       url = callback.url || null,
       file = callback.file || null,
@@ -58,37 +60,46 @@ connect.remote.register = function (request, callback) {
       quality = callback.quality || null,
       level = callback.level || 1.0,
       divide = callback.divide || 1.0,
-      multiply = callback.multiply || 1.0;
+      multiply = callback.multiply || 1.0,
+      shift = callback.shift || '00:00:03.0',
+      direction = callback.direction || 'v',
+      angle = callback.angle || '90';
 
   switch (request) {
-  case "can-operate":
+  case 'can-operate':
     ffmpeg.checkFFmpeg().then(callback, callback);
     break;
-  case "install-ffmpeg":
+  case 'install-ffmpeg':
     ffmpeg.install(listener).then(callback, callback);
     break;
-  case "get-media-info":
+  case 'get-media-info':
     ffmpeg.getInfo(audio || video).then(callback, callback);
     break;
-  case "mp3-conversion":
+  case 'mp3-conversion':
     ffmpeg.toMP3(audio || video, output, quality, listener).then(callback, callback);
     break;
-  case "volume-adjusting":
+  case 'volume-adjusting':
     ffmpeg.volume(audio || video, output, level, listener).then(callback, callback);
     break;
-  case "scale-video":
+  case 'scale-video':
     ffmpeg.scale(audio || video, output, divide, multiply, listener).then(callback, callback);
     break;
-  case "audio-muxing":
+  case 'shift-video-or-audio':
+    ffmpeg.shift(audio || video, output, shift, direction, listener).then(callback, callback);
+    break;
+  case 'rotate-video':
+    ffmpeg.rotate(audio || video, output, angle, listener).then(callback, callback);
+    break;
+  case 'audio-muxing':
     ffmpeg.toAudio(audio || video, output, listener).then(callback, callback);
     break;
-  case "audio-video-mixing":
+  case 'audio-video-mixing':
     ffmpeg.toCombined(audio, video, output, listener).then(callback, callback);
     break;
-  case "download-media":
+  case 'download-media':
     downloader.get(url, file, listener).then(callback, callback);
     break;
   default:
     callback(Error('main.js -> remote -> unknown request'));
   }
-}
+};

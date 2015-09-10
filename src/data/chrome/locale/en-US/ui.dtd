@@ -11,17 +11,28 @@
 <!ENTITY tab4.accesskey "V">
 <!ENTITY tab5.label "Video Scaler">
 <!ENTITY tab5.accesskey "S">
+<!ENTITY tab6.label "Rotate">
+<!ENTITY tab6.accesskey "R">
+<!ENTITY tab7.label "Time Shift">
+<!ENTITY tab7.accesskey "T">
 <!ENTITY tabpanel3.label1 "Extractor Engine:">
 <!ENTITY tabpanel3.label2 "FFmpeg(.exe) Location">
 <!ENTITY browse "Browse...">
 <!ENTITY reset.label "Reset">
 <!ENTITY reset.accesskey "R">
 <!ENTITY input.arguments "Conversion command:">
-<!ENTITY drag1 "Drag and drop video/audio files or a single downloadable link here. Outputs will be placed in the same folder.">
-<!ENTITY drag2 "Drag and drop a video and an audio files here. The combined video file will be placed in the same folder.">
+<!ENTITY drag2 "Drag and drop a video and an audio files here.">
+<!ENTITY drag3 "Drag and drop video files or a single downloadable link here.">
+<!ENTITY note1 "Note: Outputs will be placed in the same folder.">
 <!ENTITY quality "Quality">
 <!ENTITY vbr "Variable bitrate">
 <!ENTITY cbr "Constant bitrate">
+<!ENTITY video-forward "Shift video forward">
+<!ENTITY audio-forward "Shift audio forward">
+<!ENTITY rotate-90 "Rotate video 90 degrees">
+<!ENTITY rotate-180 "Rotate video 180 degrees">
+<!ENTITY rotate-270 "Rotate video 270 degrees">
+
 <!ENTITY moresettings "More settings ...">
 <!ENTITY volume "Change volume in percent:">
 <!ENTITY divide-by "Divide video screen by:">

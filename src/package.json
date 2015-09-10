@@ -5,7 +5,7 @@
   "description": "Easy to use video and audio converter and muxer",
   "author": "",
   "license": "MPL 2.0",
-  "version": "0.1.3b3",
+  "version": "0.1.5.1",
   "permissions": {
     "private-browsing": true
   },
@@ -49,6 +49,18 @@
     "type": "string",
     "name": "scale",
     "value": "-y -i %input -vf scale=iw*%multiply/%divide:-1 -async 1 -strict -2 %output",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "shift",
+    "value": "-i %input -itsoffset %shift -i %input -vcodec copy -acodec copy %direction %output",
+    "title": ""
+  },
+  {
+    "type": "string",
+    "name": "rotate",
+    "value": "-i %input -c copy -metadata:s:v:0 rotate=%angle %output",
     "title": ""
   },
   {

@@ -1,11 +1,12 @@
 var utils        = require('./utils'),
     Promise      = require("./promise").Promise,
     {Cc, Ci, Cu} = require('chrome');
-    
-utils.XPCOMUtils.defineLazyGetter(exports, "get", function () {
+
+var exportsHelper = {};
+utils.XPCOMUtils.defineLazyGetter(exportsHelper, "get", function () {
   Cu.import("resource://gre/modules/Downloads.jsm");
   var isImplemented = "getList" in Downloads;
-  
+
   return function (url, file, listener) {
     if (!Downloads.getList) {
       return Promise.reject(Error('downloader.js -> get -> module is not implimented'));
@@ -48,5 +49,10 @@ utils.XPCOMUtils.defineLazyGetter(exports, "get", function () {
       dl.start();
       return dl;
     });
+  }
+});
+Object.defineProperty(exports, 'get', {
+  get: function () {
+    return exportsHelper.get;
   }
 });
