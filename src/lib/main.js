@@ -103,3 +103,4 @@ connect.remote.register = function (request, callback) {
     callback(Error('main.js -> remote -> unknown request'));
   }
 };
+connect.remote.utils = utils;

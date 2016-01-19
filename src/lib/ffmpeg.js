@@ -10,6 +10,9 @@ exports.find = function () {
   var locs = utils.env.PATH
     .split(isWindows ? ';' : ':');
   locs.push(utils.file.relativePath('ProfD', []).path);
+  if (utils.root.os !== 'WINNT') {
+    locs.push('/usr/local/bin');
+  }
   locs = locs
     .map(utils.file.absolutePath)
     .map(function (file) {
@@ -188,13 +191,17 @@ var analyser = {
       ms: time && time.length ? +time[4] : null
     };
   },
-  version: function (result) {
-    var version = /version\s([^\s]+)/.exec(result.stderr);
+  version: function (str) {
+    var version = /version\s([^\s]+)/.exec(str);
     return version && version.length ? version[1] : null;
   },
-  buitOn: function (result) {
-    var buitOn = /built on (.*) with gcc/.exec(result.stderr);
+  buitOn: function (str) {
+    var buitOn = /built on (.*) with gcc/.exec(str);
     return buitOn && buitOn.length ? new Date(buitOn[1]) : null;
+  },
+  audio: function (str) {
+    var audio = /Audio\:\s([^\,]+)/.exec(str);
+    return audio && audio.length ? audio[1] : null;
   }
 };
 
@@ -257,7 +264,7 @@ exports.getInfo = function (path) {
   if (path && !utils.file.exists(path)) {
     return Promise.reject(Error('ffmpeg.js -> getInfo -> file does not exist'));
   }
-  return new execute('-i "' + path + '"').then(function (result) {
+  return new execute(['-i', path]).then(function (result) {
     var tmp = {};
     for (var name in analyser) {
       tmp[name] = analyser[name](result.stderr);
@@ -328,37 +335,50 @@ exports.toAudio = function (input, output, listener) {
     internal = {stderr: perct.step};
   }
 
+  function next () {
+    output = output.replace(' - DASH', '');
+    output = utils.file.checkDuplicate(output);
+
+    var args = utils.prefs.toAudio.split(/\s+/).map(function (s) {
+      return s.replace('%input', input)
+        .replace('%output', output);
+    });
+    return new execute(args, internal)
+    .then(function (result) {
+      if (result.exitCode === 0) {
+        return true;
+      }
+      var stderr = perct ? perct.data : result.stderr;
+      var tmp = knownErrors(stderr);
+      throw Error(tmp ? 'ffmpeg.js -> toAudio -> ' + tmp : 'check error console for the complete error report');
+    });
+  }
+
   if (!output) {
     var ext = getExtension(input).toLowerCase();
+
     switch (ext) {
+    case 'weba':
     case 'webm':
     case 'ogg':
       output = input.replace('.' + ext, '.ogg');
-      break;
+      return next();
     case 'mp4':
     case 'm4a':
       output = input.replace('.' + ext, '.m4a');
-      break;
+      return next();
     default:
-      return Promise.reject(Error('ffmpeg.js -> toAudio -> could not predict the output format'));
+      return exports.getInfo(input).then(function (info) {
+        if (info.audio) {
+          output = input.replace('.' + ext, '.' + info.audio);
+          return next();
+        }
+        else {
+          throw Error('ffmpeg.js -> toAudio -> could not predict the output format');
+        }
+      });
     }
   }
-  output = output.replace(' - DASH', '');
-  output = utils.file.checkDuplicate(output);
-
-  var args = utils.prefs.toAudio.split(/\s+/).map(function (s) {
-    return s.replace('%input', input)
-      .replace('%output', output);
-  });
-  return new execute(args, internal)
-  .then(function (result) {
-    if (result.exitCode === 0) {
-      return true;
-    }
-    var stderr = perct ? perct.data : result.stderr;
-    var tmp = knownErrors(stderr);
-    throw Error(tmp ? 'ffmpeg.js -> toAudio -> ' + tmp : 'check error console for the complete error report');
-  });
 };
 
 exports.toCombined = function (audio, video, output, listener) {

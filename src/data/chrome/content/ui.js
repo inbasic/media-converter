@@ -1,3 +1,5 @@
+'use strict';
+
 function $ (query, parent) {
   return (parent || document).querySelector(query);
 }
@@ -8,13 +10,10 @@ function $ (query, parent) {
     'change-progress'
 
 */
+
 var root = 'resource://jid1-kps5prgbntzslq-at-jetpack/imconverter/';
-var background = (function () {
-  var {XPIProvider} = Components.utils.import('resource://gre/modules/addons/XPIProvider.jsm');
-  var extensionScope = XPIProvider.bootstrapScopes['jid1-kps5PrGBNtzSLQ@jetpack'];
-  var main = extensionScope.loader.sandboxes[root + 'lib/main.js'];
-  return main;
-})();
+var connect = Components.utils.import(root + 'data/shared/connect.jsm');
+var background = connect.remote;
 
 var prefs = background.utils.prefs;
 var event = background.utils.event;
@@ -126,13 +125,6 @@ app.on('ffmpeg-installed', function () {
   }
   $('#ffmpeg textbox').value = background.utils.prefs.ffmpeg;
 });
-
-var connect = (function () {
-  var c = {};
-  background.utils.import('shared/connect.jsm', c);
-  return c;
-})();
-
 
 /*
  *  panel module
