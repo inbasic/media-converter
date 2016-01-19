@@ -15,6 +15,7 @@
   ondragover="return drag.checkDrag(event)"
   ondrop="drag.doDrop(event)"
   >
+<html:link rel="icon" href="chrome://imconverter/skin/icon.png" style="display:none"/>
 
 <notificationbox flex="1">
 <hbox id="progress" align="center">
