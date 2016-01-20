@@ -1,5 +1,3 @@
-'use strict';
-
 function $ (query, parent) {
   return (parent || document).querySelector(query);
 }
