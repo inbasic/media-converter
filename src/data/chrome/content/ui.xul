@@ -190,11 +190,41 @@
     </tabpanel>
     <!-- Settings -->
     <tabpanel orient="vertical" id="ffmpeg">
+      <vbox>
+        <description value="&tabpanel3.label8;"></description>
+        <label class="text-link" href="https://sourceforge.net/projects/iaextractor/files/FFmpeg/" value="https://sourceforge.net/projects/iaextractor/files/FFmpeg/"/>
+      </vbox>
       <hbox align="center">
         <label value="&tabpanel3.label1;"/>
         <textbox emptytext="&tabpanel3.label2;" flex="1"/>
         <button data-type="browse" label="&browse;"/>
       </hbox>
+      <groupbox>
+        <caption label="&tabpanel3.label3;"/>
+        <grid>
+          <columns>
+            <column/>
+            <column flex="1"/>
+          </columns>
+          <rows>
+            <row>
+              <label value="&tabpanel3.label4;"/>
+              <vbox>
+                <label class="text-link" href="http://ffmpeg.zeranoe.com/builds/" value="http://ffmpeg.zeranoe.com/builds/"/>
+                <label value="&tabpanel3.label7;"/>
+              </vbox>
+            </row>
+            <row>
+              <label value="&tabpanel3.label5;"/>
+              <label class="text-link" href="https://evermeet.cx/ffmpeg/" value="https://evermeet.cx/ffmpeg/"/>
+            </row>
+            <row>
+              <label value="&tabpanel3.label6;"/>
+              <label class="text-link" href="http://johnvansickle.com/ffmpeg/" value="http://johnvansickle.com/ffmpeg/"/>
+            </row>
+          </rows>
+        </grid>
+      </groupbox>
       <spacer flex="1"/>
       <hbox>
         <button data-type="settings" label="&moresettings;"/>

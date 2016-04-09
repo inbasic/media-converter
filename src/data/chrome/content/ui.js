@@ -8,8 +8,11 @@ function $ (query, parent) {
     'change-progress'
 
 */
-
-var root = 'resource://jid1-kps5prgbntzslq-at-jetpack/imconverter/';
+/*
+var {require} = Components.utils.import('resource://gre/modules/commonjs/toolkit/require.js', {});
+var tabs = require('sdk/tabs');
+*/
+var root = 'resource://jid1-kps5prgbntzslq-at-jetpack/';
 var connect = Components.utils.import(root + 'data/shared/connect.jsm');
 var background = connect.remote;
 

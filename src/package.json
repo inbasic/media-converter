@@ -1,71 +1,72 @@
 {
   "name": "imconverter",
   "title": "Media Converter and Muxer",
-  "id": "jid1-kps5PrGBNtzSLQ",
+  "id": "jid1-kps5PrGBNtzSLQ@jetpack",
   "description": "Easy to use video and audio converter and muxer",
-  "author": "",
+  "author": "InBasic",
   "license": "MPL 2.0",
-  "version": "0.1.7.1",
+  "version": "0.1.8",
+  "main": "./lib/main.js",
   "permissions": {
     "private-browsing": true
   },
   "preferences": [{
     "name": "hotkey",
-    "title": "",
-    "description": "",
+    "title": "Open conversion tools with:",
+    "description": "Any function key (f1, f2, ..., f24) or key combination in the format of 'modifier-key'. Acceptable modifier are: 'accel', 'meta', 'shift' ,'control', 'alt', 'pageup', 'pagedown'",
     "type": "string",
     "value": "accel-shift-n"
   },
   {
     "type": "file",
     "name": "ffmpeg",
-    "title": ""
+    "title": "FFmpeg(binary) location"
   },
   {
     "type": "string",
     "name": "toMP3",
     "value": "-y -i %input %quality %output.mp3",
-    "title": ""
+    "title": "FFmpeg input argument for MP3 conversion"
   },
   {
     "type": "string",
     "name": "toAudio",
     "value": "-y -i %input -acodec copy -vn %output",
-    "title": ""
+    "title": "FFmpeg input argument for audio extraction"
   },
   {
     "type": "string",
     "name": "toCombined",
     "value": "-y -i %audio -i %video -c copy %output",
-    "title": ""
+    "title": "FFmpeg input argument for audio and video combining"
   },
   {
     "type": "string",
     "name": "volume",
     "value": "-y -i %input -af volume=%level -strict -2 %output",
-    "title": ""
+    "title": "FFmpeg input argument for adjusting volume"
   },
   {
     "type": "string",
     "name": "scale",
     "value": "-y -i %input -vf scale=iw*%multiply/%divide:-1 -async 1 -strict -2 %output",
-    "title": ""
+    "title": "FFmpeg input argument for scaling a video file"
   },
   {
     "type": "string",
     "name": "shift",
     "value": "-i %input -itsoffset %shift -i %input -vcodec copy -acodec copy %direction %output",
-    "title": ""
+    "title": "FFmpeg input argument for shifting audio or video stream forward"
   },
   {
     "type": "string",
     "name": "rotate",
     "value": "-i %input -c copy -metadata:s:v:0 rotate=%angle %output",
-    "title": ""
+    "title": "FFmpeg input argument for rotating a video file"
   },
   {
     "name": "welcome",
-    "title": "",
+    "title": "Show FAQs page on upgrade",
     "type": "bool",
     "value": true
   }]

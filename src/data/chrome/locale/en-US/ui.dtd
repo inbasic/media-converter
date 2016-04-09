@@ -16,7 +16,13 @@
 <!ENTITY tab7.label "Time Shift">
 <!ENTITY tab7.accesskey "T">
 <!ENTITY tabpanel3.label1 "Extractor Engine:">
-<!ENTITY tabpanel3.label2 "FFmpeg(.exe) Location">
+<!ENTITY tabpanel3.label2 "FFmpeg(binary) Location">
+<!ENTITY tabpanel3.label3 "FFmpeg(binary) Download Links:">
+<!ENTITY tabpanel3.label4 "Windows">
+<!ENTITY tabpanel3.label5 "Mac">
+<!ENTITY tabpanel3.label6 "Linux">
+<!ENTITY tabpanel3.label7 'Download and extract the archive. Point the "Browse ..." button to FFmpeg.exe file in the "bin" directory of the extracted folder.'>
+<!ENTITY tabpanel3.label8 "For the extension to download and install FFmpeg you need to be able to visit the following link:">
 <!ENTITY browse "Browse...">
 <!ENTITY reset.label "Reset">
 <!ENTITY reset.accesskey "R">
