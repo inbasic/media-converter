@@ -5,7 +5,7 @@
   "description": "Easy to use video and audio converter and muxer",
   "author": "InBasic",
   "license": "MPL 2.0",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "./lib/main.js",
   "permissions": {
     "private-browsing": true
@@ -43,13 +43,13 @@
   {
     "type": "string",
     "name": "volume",
-    "value": "-y -i %input -af volume=%level -strict -2 %output",
+    "value": "-y -i %input -af volume=%level %output",
     "title": "FFmpeg input argument for adjusting volume"
   },
   {
     "type": "string",
     "name": "scale",
-    "value": "-y -i %input -vf scale=iw*%multiply/%divide:-1 -async 1 -strict -2 %output",
+    "value": "-y -i %input -vf scale=iw*%multiply/%divide:-1 -async 1 %output",
     "title": "FFmpeg input argument for scaling a video file"
   },
   {

@@ -217,30 +217,32 @@ var drag = {
 /* notification center
  * events: no-ffmpeg, ffmpeg-installation-failed, ffmpeg-installation-succeeded, installing-ffmpeg
  */
+function installFFmpeg () {
+  app.emit('installing-ffmpeg');
+  log.value = l10n('installingffmpeg');
+  progress.emit('register', 'download-ffmpeg');
+  connect.remote.register('install-ffmpeg', (function () {
+    function c(o) {
+      app.emit(handleError(o) ? 'ffmpeg-installation-failed' : 'ffmpeg-installation-succeeded');
+      progress.emit('remove', 'download-ffmpeg');
+      log.value = l10n('done');
+      canOperate();
+    }
+    c.listener = {
+      progress: function (p) {
+        progress.emit('download-ffmpeg', p + 10);
+      }
+    };
+    return c;
+  })());
+}
+
 app.on('no-ffmpeg', function () {
   var notificationbox = $('notificationbox');
   var buttons = [{
     label: l10n('proceed.label'),
     accessKey: l10n('proceed.accesskey'),
-    callback: function () {
-      app.emit('installing-ffmpeg');
-      log.value = l10n('installingffmpeg');
-      progress.emit('register', 'download-ffmpeg');
-      connect.remote.register('install-ffmpeg', (function () {
-        function c(o) {
-          app.emit(handleError(o) ? 'ffmpeg-installation-failed' : 'ffmpeg-installation-succeeded');
-          progress.emit('remove', 'download-ffmpeg');
-          log.value = l10n('done');
-          canOperate();
-        }
-        c.listener = {
-          progress: function (p) {
-            progress.emit('download-ffmpeg', p + 10);
-          }
-        };
-        return c;
-      })());
-    }
+    callback: installFFmpeg
   }];
   notificationbox.appendNotification(
     l10n('msg.no_ffmpeg'),
@@ -415,6 +417,7 @@ $('#ffmpeg textbox').addEventListener('click', function () {
   $('#ffmpeg button').doCommand();
 }, false);
 $('#ffmpeg textbox').value = prefs.ffmpeg || '';
+$('#ffmpeg button[data-type=download]').addEventListener('command', installFFmpeg, false);
 
 function handleError (e) {
   if (e.__proto__.toString() === 'Error') {

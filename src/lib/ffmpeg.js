@@ -5,6 +5,8 @@ var utils      = require('./system/utils'),
     downloader = require('./system/downloader'),
     Promise    = utils.Promise;
 
+var exportsHelper = {};
+
 exports.find = function () {
   var isWindows = utils.root.os === 'WINNT';
   var locs = utils.env.PATH
@@ -113,63 +115,76 @@ function execute(args, listener) {
 }
 exports.execute = execute;
 
-utils.XPCOMUtils.defineLazyGetter(exports, 'install', function () {
-  var os = utils.root.os,
-      isWindows = os === 'WINNT',
-      pageURL = config.urls.ffmpeg.replace('%os', os) + (isWindows ? '.exe' : ''),
-      file = utils.file.relativePath('ProfD', ['ffmpeg' + (isWindows ? '.exe' : '')]);
+utils.XPCOMUtils.defineLazyGetter(exportsHelper, 'install', function () {
+  var os = utils.root.os, isWindows = os === 'WINNT';
+  let name = `ffmpeg${isWindows ? '.exe' : ''}`;
+  let file = utils.file.relativePath('ProfD', ['ffmpeg' + (isWindows ? '.exe' : '')]);
 
   return function (listener) {
-    var d = new Promise.defer();
-    if (isValidSize(file)) {
-      var confirm = utils.windows.getActive().confirm(
-        utils.l10n('msg.ffmpeg_overwrite')
-      );
-      if (!confirm) {
-        return Promise.reject(Error('ffmpeg.js -> install -> ffmpeg found and user refused to overwrite it'));
+    listener = listener || {
+      progress: function () {}
+    };
+    function next () {
+      let d = new Promise.defer();
+      if (file.exists()) {
+        file.remove(false);
       }
-    }
-    if (file.exists()) {
-      file.remove(false);
-    }
-    utils.Request({
-      url: pageURL,
-      onComplete: function (response) {
-        if (response.status === 200) {
-          var url = (new RegExp(pageURL.replace('https', 'http.{0,1}') + '[^\"]*')).exec(response.text);
-          if (!url) {
-            return d.reject(Error('ffmpeg.js -> install -> could not resolve FFmpeg\'s download link from download page'));
-          }
-          url = url[0].replace(/\&amp\;/g, '&');
-
-          file.create(utils.file.nsIFile.NORMAL_FILE_TYPE, 777);
-          var internal = {
-            progress: function (p) {
-              if (listener && listener.progress) {
-                listener.progress(p);
-              }
-            },
-            done: function () {
-              if (isValidSize(file)) {
-                utils.timer.setTimeout(function () {
-                  file.permissions = 755;
-                  d.resolve(file.path);
-                }, config.durations.permissionOverwrite);
+      utils.Request({
+        url: config.urls.update,
+        onComplete: function (response) {
+          if (response.status === 200) {
+            let json = response.json;
+            if (json) {
+              let assets = json.assets;
+              if (assets) {
+                let entry = assets.filter(obj => obj.name.indexOf(isWindows ? 'win32' : os.toLowerCase()) !== -1 && obj.name.indexOf(utils.root.arch) !== -1);
+                if (entry.length) {
+                  downloader.get(entry[0].browser_download_url, file.path, {
+                    progress: (p) => listener.progress(p),
+                    error: () => d.reject(Error('ffmpeg.js -> install -> download has been canceled')),
+                    done: function () {
+                      if (isValidSize(file)) {
+                        utils.timer.setTimeout(function () {
+                          file.permissions = 755;
+                          d.resolve(file.path);
+                        }, config.durations.permissionOverwrite);
+                      }
+                      else {
+                        d.reject(Error('ffmpeg.js -> install -> downloaded file has invalid size'));
+                      }
+                    }
+                  });
+                }
+                else {
+                  d.reject(Error('ffmpeg.js -> install -> cannot find a suitable FFmpeg for your OS'));
+                }
               }
               else {
-                d.reject(Error('ffmpeg.js -> install -> invalid file size'));
+                d.reject(Error('ffmpeg.js -> install -> response does not have any asset'));
               }
-            },
-            error: function () {
-              d.reject(Error('ffmpeg.js -> install -> download has been canceled'));
             }
-          };
-          downloader.get(url, file, internal);
+            else {
+              d.reject(Error('ffmpeg.js -> install -> response is not a JSON object'));
+            }
+          }
+          else {
+            d.reject(Error(`ffmpeg.js -> install -> cannot connect to server; code: ${response.status}`));
+          }
         }
+      }).get();
+      return d.promise;
+    }
+    return isValidSize(file).then(function () {
+      if (!utils.windows.getActive().confirm(utils.l10n('msg.ffmpeg_overwrite'))) {
+        throw new Error('ffmpeg.js -> install -> ffmpeg found and user refused to overwrite it');
       }
-    }).get();
-    return d.promise;
+    }, function () {}).then(next);
   };
+});
+Object.defineProperty(exports, 'install', {
+  get: function () {
+    return exportsHelper.install;
+  }
 });
 
 var analyser = {

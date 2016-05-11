@@ -59,11 +59,12 @@ var exportsHelper = {};
 
 /* root */
 XPCOMUtils.defineLazyGetter(exportsHelper, "root", function () {
-  var os = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime).OS;
+  let nsIXULRuntime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime);
 
   return {
-    os: os
-  }
+    os: nsIXULRuntime.OS,
+    arch: nsIXULRuntime.is64Bit ? 'x64' : 'ia32'
+  };
 });
 Object.defineProperty(exports, 'root', {
   get: function () {

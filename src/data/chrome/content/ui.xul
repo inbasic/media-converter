@@ -190,14 +190,11 @@
     </tabpanel>
     <!-- Settings -->
     <tabpanel orient="vertical" id="ffmpeg">
-      <vbox>
-        <description value="&tabpanel3.label8;"></description>
-        <label class="text-link" href="https://sourceforge.net/projects/iaextractor/files/FFmpeg/" value="https://sourceforge.net/projects/iaextractor/files/FFmpeg/"/>
-      </vbox>
       <hbox align="center">
         <label value="&tabpanel3.label1;"/>
         <textbox emptytext="&tabpanel3.label2;" flex="1"/>
         <button data-type="browse" label="&browse;"/>
+        <button data-type="download" label="&download;"/>
       </hbox>
       <groupbox>
         <caption label="&tabpanel3.label3;"/>

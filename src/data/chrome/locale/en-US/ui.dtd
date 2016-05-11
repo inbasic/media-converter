@@ -22,8 +22,8 @@
 <!ENTITY tabpanel3.label5 "Mac">
 <!ENTITY tabpanel3.label6 "Linux">
 <!ENTITY tabpanel3.label7 'Download and extract the archive. Point the "Browse ..." button to FFmpeg.exe file in the "bin" directory of the extracted folder.'>
-<!ENTITY tabpanel3.label8 "For the extension to download and install FFmpeg you need to be able to visit the following link:">
 <!ENTITY browse "Browse...">
+<!ENTITY download "Download FFmpeg">
 <!ENTITY reset.label "Reset">
 <!ENTITY reset.accesskey "R">
 <!ENTITY input.arguments "Conversion command:">
