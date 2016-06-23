@@ -21,6 +21,7 @@
 <hbox id="progress" align="center">
   <label value="[0]"/>
   <progressmeter mode="determined" flex="1"/>
+  <toolbarbutton id="abort" label="abort"/>
 </hbox>
 <hbox flex="1">
   <vbox id="tabs">
@@ -84,6 +85,7 @@
         </grid>
         </groupbox>
       </radiogroup>
+      <checkbox label="Delete the original file after successful conversion" checked="false"/>
       <vbox flex="1" pack="center" align="center">
         <label value="&drag3;"/>
         <label value="&note1;"/>

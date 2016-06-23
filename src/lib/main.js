@@ -58,6 +58,7 @@ connect.remote.register = function (request, callback) {
       file = callback.file || null,
       listener = callback.listener || null,
       quality = callback.quality || null,
+      kill = callback.kill || false,
       level = callback.level || 1.0,
       divide = callback.divide || 1.0,
       multiply = callback.multiply || 1.0,
@@ -69,6 +70,9 @@ connect.remote.register = function (request, callback) {
   case 'can-operate':
     ffmpeg.checkFFmpeg().then(callback, callback);
     break;
+  case 'kill-ffmpeg':
+    ffmpeg.killFFmpeg().then(callback, callback);
+    break;
   case 'install-ffmpeg':
     ffmpeg.install(listener).then(callback, callback);
     break;
@@ -76,7 +80,7 @@ connect.remote.register = function (request, callback) {
     ffmpeg.getInfo(audio || video).then(callback, callback);
     break;
   case 'mp3-conversion':
-    ffmpeg.toMP3(audio || video, output, quality, listener).then(callback, callback);
+    ffmpeg.toMP3(audio || video, output, quality, kill, listener).then(callback, callback);
     break;
   case 'volume-adjusting':
     ffmpeg.volume(audio || video, output, level, listener).then(callback, callback);

@@ -1,17 +1,17 @@
-var utils        = require('./utils'),
-    Promise      = require("./promise").Promise,
-    {Cc, Ci, Cu} = require('chrome');
+'use strict';
+
+var utils = require('./utils'),
+    {Cu}  = require('chrome');
 
 var exportsHelper = {};
-utils.XPCOMUtils.defineLazyGetter(exportsHelper, "get", function () {
-  Cu.import("resource://gre/modules/Downloads.jsm");
-  var isImplemented = "getList" in Downloads;
+utils.XPCOMUtils.defineLazyGetter(exportsHelper, 'get', function () {
+  let {Downloads} = Cu.import('resource://gre/modules/Downloads.jsm');
 
   return function (url, file, listener) {
     if (!Downloads.getList) {
-      return Promise.reject(Error('downloader.js -> get -> module is not implimented'));
+      return utils.Promise.reject(Error('downloader.js -> get -> module is not implimented'));
     }
-    return Promise.all([
+    return utils.Promise.all([
       Downloads.createDownload({
         source: url,
         target: file
@@ -20,7 +20,9 @@ utils.XPCOMUtils.defineLazyGetter(exportsHelper, "get", function () {
     ]).then(function ([dl, list]) {
       var view = {
         onDownloadChanged: function (d) {
-          if (d != dl) return;
+          if (d !== dl) {
+            return;
+          }
           if (listener && listener.progress) {
             listener.progress(dl.currentBytes / dl.totalBytes * 100, dl.currentBytes, dl.totalBytes, dl);
           }
@@ -49,7 +51,7 @@ utils.XPCOMUtils.defineLazyGetter(exportsHelper, "get", function () {
       dl.start();
       return dl;
     });
-  }
+  };
 });
 Object.defineProperty(exports, 'get', {
   get: function () {

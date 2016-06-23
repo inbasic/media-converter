@@ -295,6 +295,12 @@ $('#toMP3 textbox').value = prefs.toMP3 || '';
     prefs.mquality = mquality.selectedIndex;
   });
 })($('#toMP3 radiogroup'));
+(function (checkbox) {
+  checkbox.checked = prefs.mp3Delete;
+  checkbox.addEventListener('click', function () {
+    prefs.mp3Delete = checkbox.checked;
+  });
+})($('#toMP3 checkbox'));
 
 //toAudio
 $('#toAudio textbox').addEventListener('change', function () {
@@ -469,9 +475,11 @@ var conversions = (function () {
         var angle = ['90', '180', '270'][$('#rotate radiogroup').selectedIndex];
         var direction = ['v', 'a'][$('#shift radiogroup').selectedIndex];
         var shift = $('#shift radiogroup').parentNode.querySelector('textbox').value;
+        var kill = $('#toMP3 checkbox').checked;
 
         callback.quality = quality;
         callback.angle = angle;
+        callback.kill = kill;
         callback.direction = direction;
         callback.shift = shift;
         callback.audio = file.path;
@@ -548,3 +556,9 @@ var download = (function () {
     }
   };
 })();
+
+document.getElementById('abort').addEventListener('command', function () {
+  if (confirm('Are you sure you want to kill FFmpeg process?')) {
+    connect.remote.register('kill-ffmpeg');
+  }
+})

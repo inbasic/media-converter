@@ -71,6 +71,8 @@ exports.checkFFmpeg = function () {
   });
 };
 
+var cps = [];
+
 function execute(args, listener) {
   var d = new Promise.defer();
   listener = listener || {};
@@ -82,6 +84,7 @@ function execute(args, listener) {
   exports.checkFFmpeg().then(function () {
     var ffmpeg = utils.prefs.ffmpeg;
     var cp = utils.child_process.spawn(ffmpeg, typeof args === 'string' ? args.split(/\s+/) : [].concat.apply([], args));
+    cps.push(cp);
     cp.stdout.on('data', function (data) {
       result.stdout += data;
       if (listener.stdout) {
@@ -95,6 +98,10 @@ function execute(args, listener) {
       }
     });
     cp.on('close', function (code) {
+      var index = cps.indexOf(cp);
+      if (index !== -1) {
+        cps.splice(index, 1);
+      }
       isDone = true;
       result.exitCode = code;
       d.resolve(result);
@@ -288,7 +295,7 @@ exports.getInfo = function (path) {
   });
 };
 
-exports.toMP3 = function (input, output, quality, listener) {
+exports.toMP3 = function (input, output, quality, kill, listener) {
   if (!utils.file.exists(input)) {
     return Promise.reject(Error('ffmpeg.js -> toMP3 -> file does not exist'));
   }
@@ -323,6 +330,9 @@ exports.toMP3 = function (input, output, quality, listener) {
   return new execute(args, internal)
   .then(function (result) {
     if (result.exitCode === 0) {
+      if (kill) {
+        utils.file.absolutePath(input).remove(false);
+      }
       return true;
     }
     var stderr = perct ? perct.data : result.stderr;
@@ -598,3 +608,13 @@ exports.rotate = function (input, output, angle, listener) {
     throw Error(tmp ? 'ffmpeg.js -> rotate -> ' + tmp : 'check error console for the complete error report');
   });
 };
+
+exports.killFFmpeg = function () {
+  cps.forEach(cp => {
+    try {
+      cp.kill();
+    }
+    catch (e) {}
+  });
+};
+utils.unload.when(exports.killFFmpeg);

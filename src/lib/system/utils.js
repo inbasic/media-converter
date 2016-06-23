@@ -1,29 +1,41 @@
-var {Cc, Ci, Cu, components} = require('chrome'),
-    {emit, on, off}          = require("sdk/event/core"),
-    {Hotkey}                 = require("sdk/hotkeys"),
+'use strict';
+
+var {Cc, Ci, Cu}             = require('chrome'),
+    {emit, on, off}          = require('sdk/event/core'),
+    {Hotkey}                 = require('sdk/hotkeys'),
     {env}                    = require('sdk/system/environment'),
-    timer                    = require("sdk/timers"),
-    unload                   = require("sdk/system/unload"),
-    tabs                     = require("sdk/tabs"),
-    self                     = require("sdk/self"),
+    timer                    = require('sdk/timers'),
+    unload                   = require('sdk/system/unload'),
+    tabs                     = require('sdk/tabs'),
+    self                     = require('sdk/self'),
     data                     = self.data,
     windowUtils              = require('sdk/window/utils'),
-    Request                  = require("sdk/request").Request,
-    prefService              = require("sdk/preferences/service"),
-    sp                       = require("sdk/simple-prefs"),
+    Request                  = require('sdk/request').Request,
+    prefService              = require('sdk/preferences/service'),
+    sp                       = require('sdk/simple-prefs'),
     prefs                    = sp.prefs,
-    l10n                     = require("sdk/l10n").get,
-    child_process            = require("sdk/system/child_process"),
-    Promise                  = require("./promise").Promise,
-    config                   = require('../config');
-    hiddenWindow             = Cc["@mozilla.org/appshell/appShellService;1"]
+    l10n                     = require('sdk/l10n').get,
+    notifications            = require('sdk/notifications'),
+    child_process            = require('sdk/system/child_process'),
+    config                   = require('../config'),
+    {all, defer, race, resolve, reject}  = require('sdk/core/promise'),
+    hiddenWindow             = Cc['@mozilla.org/appshell/appShellService;1']
       .getService(Ci.nsIAppShellService)
       .hiddenDOMWindow;
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+var {XPCOMUtils} = Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
 /* Promise */
-exports.Promise = Promise;
+exports.Promise = function (callback) {
+  let d = defer();
+  callback(d.resolve, d.reject);
+  return d.promise;
+};
+exports.Promise.defer = defer;
+exports.Promise.all = all;
+exports.Promise.race = race;
+exports.Promise.resolve = resolve;
+exports.Promise.reject = reject;
 /* XPCOMUtils */
 exports.XPCOMUtils = XPCOMUtils;
 /* Hotkey */
@@ -43,9 +55,9 @@ exports.child_process = child_process;
 /* manifest */
 exports.manifest = self;
 /* import */
-exports["import"] = function (path, obj) {
+exports['import'] = function (path, obj) {
   Cu.import(data.url(path), obj);
-}
+};
 /* event */
 exports.event = function (obj) {
   obj = obj || {};
@@ -54,12 +66,12 @@ exports.event = function (obj) {
   obj.off = off.bind(null, obj);
 
   return obj;
-}
+};
 var exportsHelper = {};
 
 /* root */
-XPCOMUtils.defineLazyGetter(exportsHelper, "root", function () {
-  let nsIXULRuntime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime);
+XPCOMUtils.defineLazyGetter(exportsHelper, 'root', function () {
+  let nsIXULRuntime = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULRuntime);
 
   return {
     os: nsIXULRuntime.OS,
@@ -75,42 +87,34 @@ Object.defineProperty(exports, 'root', {
 /* Windows */
 var windows = {
   open: function (path, name) {
-    var win = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+    let win = Cc['@mozilla.org/embedcomp/window-watcher;1']
       .getService(Ci.nsIWindowWatcher)
-      .openWindow(null, path, name || "unknown", "chrome,centerscreen,resizable=yes", null);
+      .openWindow(null, path, name || 'unknown', 'chrome,centerscreen,resizable=yes', null);
     unload.when(function () {
-      if (win) win.close();
+      if (win) {
+        win.close();
+      }
     });
     return win;
   },
-  openHome: function (extra) {
-    tabs.open(config.urls.homepage + (extra ? "?" + extra : ""));
-  },
-  openOptions: function () {
-    this.getActive().BrowserOpenAddonsMgr("addons://detail/" + encodeURIComponent(self.id));
-  },
-  getActive: function () {
-    return windowUtils.getMostRecentBrowserWindow()
-  }
-}
+  openHome: (extra) => tabs.open(config.urls.homepage + (extra ? '?' + extra : '')),
+  openOptions: () => windowUtils.getMostRecentBrowserWindow().BrowserOpenAddonsMgr('addons://detail/' + encodeURIComponent(self.id)),
+  getActive: () => windowUtils.getMostRecentBrowserWindow()
+};
 exports.windows = windows;
 /* preferences */
 exports.prefs = prefs;
-exports.reset = function (name) {
-  prefService.reset(['extensions', self.id, name].join('.'));
-};
+exports.reset = (name) => prefService.reset(['extensions', self.id, name].join('.'));
 /* file */
-XPCOMUtils.defineLazyGetter(exportsHelper, "file", function () {
-  Cu.import("resource://gre/modules/FileUtils.jsm");
+XPCOMUtils.defineLazyGetter(exportsHelper, 'file', function () {
+  let {FileUtils} = Cu.import('resource://gre/modules/FileUtils.jsm');
   function toFile (path) {
     return new FileUtils.File(path);
   }
   return {
-    exists: function (path) {
-      return (typeof(path) === "string" ?  toFile(path) : path).exists();
-    },
+    exists: (path) => (typeof(path) === 'string' ?  toFile(path) : path).exists(),
     checkDuplicate: function (path) {
-      var file = toFile(path);
+      let file = toFile(path);
       file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, FileUtils.PERMS_FILE);
       if (path !== file.path) {
         file.remove(false);
@@ -118,10 +122,10 @@ XPCOMUtils.defineLazyGetter(exportsHelper, "file", function () {
       return file.path;
     },
     browse: function (title, mode) {
-      var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-      fp.init(hiddenWindow, title, mode === "save" ? Ci.nsIFilePicker.modeSave : Ci.nsIFilePicker.modeOpen);
-      var rv = fp.show();
-      if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
+      let fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
+      fp.init(hiddenWindow, title, mode === 'save' ? Ci.nsIFilePicker.modeSave : Ci.nsIFilePicker.modeOpen);
+      let rv = fp.show();
+      if (rv === Ci.nsIFilePicker.returnOK || rv === Ci.nsIFilePicker.returnReplace) {
         return fp.file;
       }
       return null;
@@ -129,7 +133,7 @@ XPCOMUtils.defineLazyGetter(exportsHelper, "file", function () {
     absolutePath: toFile,
     relativePath: (a, b) => FileUtils.getFile(a, b),
     nsIFile: Ci.nsIFile
-  }
+  };
 });
 Object.defineProperty(exports, 'file', {
   get: function () {
@@ -138,39 +142,10 @@ Object.defineProperty(exports, 'file', {
 });
 
 /* notification */
-XPCOMUtils.defineLazyGetter(exportsHelper, "notify", function () {
-  var alertServ;
-  try {
-    alertServ = Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService);
-  }
-  catch (e) {}
-
-  return function (title, text, img) {
-    text = text.length > 250 ? "..." + text.substr(text.length - 250) : text;
-    if (alertServ && 'showAlertNotification' in alertServ) {
-      alertServ.showAlertNotification(
-        img || data.url('images/notification-desktop.png'),
-        title,
-        text
-      );
-    }
-    else {
-      var notificationBox = windows.getActive().gBrowser.getNotificationBox();
-      var notification = notificationBox.appendNotification(
-        text,
-        'jetpack-notification-box',
-        img || data.url('images/notification-desktop.png'),
-        notificationBox.PRIORITY_INFO_MEDIUM,
-        []
-      );
-      timer.setTimeout(function () {
-        notification.close();
-      }, config.durations.notification);
-    }
-  }
-});
-Object.defineProperty(exports, 'notify', {
-  get: function () {
-    return exportsHelper.notify;
-  }
-});
+exports.notify = function (title, text, iconURL) {
+  notifications.notify({
+    title,
+    text,
+    iconURL: iconURL || data.url('images/notification-desktop.png')
+  });
+};
