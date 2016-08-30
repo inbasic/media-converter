@@ -130,7 +130,14 @@ XPCOMUtils.defineLazyGetter(exportsHelper, 'file', function () {
       }
       return null;
     },
-    absolutePath: toFile,
+    absolutePath: function (path) {
+      try {
+        return toFile(path);
+      }
+      catch (e) {
+        return;
+      }
+    },
     relativePath: (a, b) => FileUtils.getFile(a, b),
     nsIFile: Ci.nsIFile
   };

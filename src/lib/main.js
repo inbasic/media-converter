@@ -64,7 +64,9 @@ connect.remote.register = function (request, callback) {
       multiply = callback.multiply || 1.0,
       shift = callback.shift || '00:00:03.0',
       direction = callback.direction || 'v',
-      angle = callback.angle || '90';
+      angle = callback.angle || '90',
+      frm = callback.from,
+      to = callback.to;
 
   switch (request) {
   case 'can-operate':
@@ -93,6 +95,9 @@ connect.remote.register = function (request, callback) {
     break;
   case 'rotate-video':
     ffmpeg.rotate(audio || video, output, angle, listener).then(callback, callback);
+    break;
+  case 'cut-video-or-audio':
+    ffmpeg.cut(audio || video, output, frm, to, listener).then(callback, callback);
     break;
   case 'audio-muxing':
     ffmpeg.toAudio(audio || video, output, listener).then(callback, callback);

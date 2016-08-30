@@ -404,6 +404,16 @@ $('#shift textbox').value = prefs.shift || '';
   });
 })($('#shift radiogroup'));
 
+//cut
+$('#cut textbox').addEventListener('change', function () {
+  prefs.cut = this.value;
+}, false);
+$('#cut button').addEventListener('command', function () {
+  background.utils.reset('cut');
+  $('#cut textbox').value = prefs.cut;
+}, false);
+$('#cut textbox').value = prefs.cut || '';
+
 //ffmpeg
 $('#ffmpeg textbox').addEventListener('change', function () {
   prefs.ffmpeg = this.value;
@@ -448,6 +458,7 @@ var conversions = (function () {
     case 'scale':
     case 'rotate':
     case 'shift':
+    case 'cut':
       function doOne () {
         var file = files.shift();
         log.emit('change', l10n('workingon') + ' ' + file.path);
@@ -476,12 +487,16 @@ var conversions = (function () {
         var direction = ['v', 'a'][$('#shift radiogroup').selectedIndex];
         var shift = $('#shift radiogroup').parentNode.querySelector('textbox').value;
         var kill = $('#toMP3 checkbox').checked;
+        var frm = $('#cut [data-type="from"]').value;
+        var to = $('#cut [data-type="to"]').value;
 
         callback.quality = quality;
         callback.angle = angle;
         callback.kill = kill;
         callback.direction = direction;
         callback.shift = shift;
+        callback.from = frm;
+        callback.to = to;
         callback.audio = file.path;
         callback.level = $('#volume scale').value / 10;
         callback.divide = $('#divide-by-scale').value;
@@ -493,8 +508,9 @@ var conversions = (function () {
             'volume-adjusting',
             'scale-video',
             'rotate-video',
-            'shift-video-or-audio'
-          ][['toMP3', 'toAudio', 'volume', 'scale', 'rotate', 'shift'].indexOf(action)],
+            'shift-video-or-audio',
+            'cut-video-or-audio'
+          ][['toMP3', 'toAudio', 'volume', 'scale', 'rotate', 'shift', 'cut'].indexOf(action)],
           callback
         );
       }

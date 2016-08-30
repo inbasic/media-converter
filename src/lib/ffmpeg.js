@@ -3,32 +3,36 @@
 var utils      = require('./system/utils'),
     config     = require('./config'),
     downloader = require('./system/downloader'),
-    Promise    = utils.Promise;
+    Promise    = utils.Promise; // jshint ignore:line
 
 var exportsHelper = {};
 
 exports.find = function () {
-  var isWindows = utils.root.os === 'WINNT';
-  var locs = utils.env.PATH
-    .split(isWindows ? ';' : ':');
-  locs.push(utils.file.relativePath('ProfD', []).path);
-  if (utils.root.os !== 'WINNT') {
-    locs.push('/usr/local/bin');
-  }
-  locs = locs
-    .map(utils.file.absolutePath)
-    .map(function (file) {
-      file.append(isWindows ? 'FFmpeg.exe' : 'ffmpeg');
-      return file;
-    });
-  var file = locs.reduce(function (p, c) {
-    return p || (utils.file.exists(c) ? c : null);
-  }, null);
-
-  if (file) {
-    return Promise.resolve(file.path);
-  }
-  return Promise.reject(Error('ffmpeg.js -> find -> file does not exist'));
+  return new Promise(function (resolve, reject) {
+    var isWindows = utils.root.os === 'WINNT';
+    var locs = utils.env.PATH
+      .split(isWindows ? ';' : ':');
+    locs.push(utils.file.relativePath('ProfD', []).path);
+    if (utils.root.os !== 'WINNT') {
+      locs.push('/usr/local/bin');
+    }
+    locs = locs
+      .map(utils.file.absolutePath)
+      .filter(f => f)
+      .map(function (file) {
+        file.append(isWindows ? 'FFmpeg.exe' : 'ffmpeg');
+        return file;
+      });
+    var file = locs.reduce(function (p, c) {
+      return p || (utils.file.exists(c) ? c : null);
+    }, null);
+    if (file) {
+      resolve(file.path);
+    }
+    else {
+      reject(Error('ffmpeg.js -> find -> file does not exist'));
+    }
+  });
 };
 
 function isValidSize (file) {
@@ -60,7 +64,9 @@ exports.checkFFmpeg = function () {
   var ffmpeg = utils.prefs.ffmpeg;
   if (ffmpeg) {
     var file = utils.file.absolutePath(ffmpeg);
-    return isValidSize(file);
+    if (file) {
+      return isValidSize(file);
+    }
   }
   return exports.find().then(function (path) {
     var file = utils.file.absolutePath(path);
@@ -606,6 +612,52 @@ exports.rotate = function (input, output, angle, listener) {
     var stderr = perct ? perct.data : result.stderr;
     var tmp = knownErrors(stderr);
     throw Error(tmp ? 'ffmpeg.js -> rotate -> ' + tmp : 'check error console for the complete error report');
+  });
+};
+
+exports.cut = function (input, output, frm, to, listener) {
+  if (!utils.file.exists(input)) {
+    return Promise.reject(Error('ffmpeg.js -> cut -> file does not exist'));
+  }
+
+  var internal, perct;
+  // attaching abort to the external listener
+  if (listener) {
+    Object.defineProperty(listener, 'abort', {
+      get: function () {
+        return internal.abort || listener.abort || function () {};
+      }
+    });
+  }
+  if (listener && listener.progress) {
+    perct = new percentage(listener.progress);
+    internal = {stderr: perct.step};
+  }
+
+  output = output || input;
+  output = utils.file.checkDuplicate(output);
+
+  var pref = utils.prefs.cut;
+  if (!frm) {
+    pref = pref.replace('-ss %from', '');
+  }
+  if (!to) {
+    pref = pref.replace('-to %to', '');
+  }
+  var args = pref.split(/\s+/).map(function (s) {
+    return s.replace('%input', input)
+      .replace(/\%output[\.\w]*/, output)
+      .replace('%from', frm)
+      .replace('%to', to);
+  });
+  return new execute(args, internal)
+  .then(function (result) {
+    if (result.exitCode === 0) {
+      return true;
+    }
+    var stderr = perct ? perct.data : result.stderr;
+    var tmp = knownErrors(stderr);
+    throw Error(tmp ? 'ffmpeg.js -> cut -> ' + tmp : 'check error console for the complete error report');
   });
 };
 

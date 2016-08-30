@@ -5,7 +5,7 @@
   "description": "Easy to use video and audio converter and muxer",
   "author": "InBasic",
   "license": "MPL 2.0",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "main": "./lib/main.js",
   "permissions": {
     "private-browsing": true,
@@ -64,6 +64,12 @@
     "name": "rotate",
     "value": "-i %input -c copy -metadata:s:v:0 rotate=%angle %output",
     "title": "FFmpeg input argument for rotating a video file"
+  },
+  {
+    "type": "string",
+    "name": "cut",
+    "value": "-i %input -ss %from -to %to %output",
+    "title": "FFmpeg input argument for cutting a video file"
   },
   {
     "name": "welcome",

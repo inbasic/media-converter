@@ -32,6 +32,7 @@
     <button label="&tab5.label;" accesskey="&tab5.accesskey;"/>
     <button label="&tab6.label;" accesskey="&tab6.accesskey;"/>
     <button label="&tab7.label;" accesskey="&tab7.accesskey;"/>
+    <button label="&tab8.label;" accesskey="&tab8.accesskey;"/>
     <separator class="groove"/>
     <button label="&tab3.label;" accesskey="&tab3.accesskey;"/>
   </vbox>
@@ -185,6 +186,29 @@
         </radiogroup>
         <textbox flex="1" value="00:00:03.0"/>
       </hbox>
+      <vbox flex="1" pack="center" align="center">
+        <label value="&drag3;"/>
+        <label value="&note1;"/>
+      </vbox>
+    </tabpanel>
+    <!-- Cut -->
+    <tabpanel orient="vertical" id="cut">
+      <hbox align="center">
+        <label value="&input.arguments;"/>
+        <textbox flex="1"/>
+        <button label="&reset.label;" accesskey="&reset.accesskey;"/>
+      </hbox>
+      <hbox align="center">
+        <label value="&cutf;"/>
+        <textbox data-type="from" flex="1" value="00:00:10.0"/>
+        <label value="&cutt;"/>
+        <textbox data-type="to" flex="1" value=""/>
+      </hbox>
+      <vbox>
+        <label value="&cutnote1;"/>
+        <label value="&cutnote2;"/>
+        <label value="&cutnote3;"/>
+      </vbox>
       <vbox flex="1" pack="center" align="center">
         <label value="&drag3;"/>
         <label value="&note1;"/>
