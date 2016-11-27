@@ -230,6 +230,10 @@ var analyser = {
   audio: function (str) {
     var audio = /Audio\:\s([^\,]+)/.exec(str);
     return audio && audio.length ? audio[1] : null;
+  },
+  video: function (str) {
+    var video = /Video\:\s([^\,]+)/.exec(str);
+    return video && video.length ? video[1] : null;
   }
 };
 
@@ -286,6 +290,41 @@ function knownErrors (str) {
 function getExtension (path) {
   var tmp = /\.([^\.\/\\]+)$/.exec(path);
   return tmp && tmp.length ? tmp[1] : '';
+}
+function guessExtension (path) {
+  return exports.getInfo(path).then(obj => {
+    let video = null, audio = null;
+
+    if (obj.video && obj.video.indexOf('vp') !== -1) {
+      video = 'webm';
+    }
+    else if (obj.video && obj.video.indexOf('mpeg') !== -1) {
+      video = 'mp4';
+    }
+    else if (obj.video && obj.video.indexOf('h264') !== -1) {
+      video = 'mp4';
+    }
+    else if (obj.video) {
+      video = obj.video.split(' ')[0];
+    }
+
+    if (obj.audio && obj.audio.indexOf('aac') !== -1) {
+      audio = 'aac';
+    }
+    else if (obj.audio && obj.audio.indexOf('opus') !== -1) {
+      audio = 'opus';
+    }
+    else if (obj.audio && obj.audio.indexOf('ogg') !== -1) {
+      audio = 'ogg';
+    }
+    else if (obj.audio && obj.audio.indexOf('mp3') !== -1) {
+      audio = 'mp3';
+    }
+    else if (obj.audio) {
+      audio = obj.audio.split(' ')[0];
+    }
+    return {video, audio};
+  });
 }
 
 exports.getInfo = function (path) {
@@ -388,27 +427,29 @@ exports.toAudio = function (input, output, listener) {
   if (!output) {
     var ext = getExtension(input).toLowerCase();
 
-    switch (ext) {
-    case 'weba':
-    case 'webm':
-    case 'ogg':
-      output = input.replace('.' + ext, '.ogg');
-      return next();
-    case 'mp4':
-    case 'm4a':
-      output = input.replace('.' + ext, '.m4a');
-      return next();
-    default:
-      return exports.getInfo(input).then(function (info) {
-        if (info.audio) {
-          output = input.replace('.' + ext, '.' + info.audio);
+    return (ext && ext !== 'html' ? Promise.resolve(ext) : guessExtension(input).then(o => o.audio))
+    .then(function (ext) {
+      switch (ext) {
+      case 'weba':
+      case 'webm':
+      case 'ogg':
+      case 'vorbis':
+        output = input.replace('.' + ext, '') + '.ogg';
+        return next();
+      case 'mp4':
+      case 'm4a':
+        output = input.replace('.' + ext, '') + '.m4a';
+        return next();
+      default:
+        if (ext) {
+          output = input.replace('.' + ext, '') + '.' + ext;
           return next();
         }
         else {
           throw Error('ffmpeg.js -> toAudio -> could not predict the output format');
         }
-      });
-    }
+      }
+    });
   }
 };
 
@@ -435,28 +476,36 @@ exports.toCombined = function (audio, video, output, listener) {
   }
 
   output = output || video;
-  // output has extension?
-  var tmp = /\%output\.([^\s]*)/.exec(utils.prefs.toCombined);
   var ext = getExtension(output);
-  if (tmp && tmp.length) {
-    output = output.replace('.' + ext, '') + '.' + tmp[1];
-  }
-  output = output.replace(' - DASH', '');
-  output = utils.file.checkDuplicate(output);
 
-  var args = utils.prefs.toCombined.split(/\s+/).map(function (s) {
-    return s.replace('%audio', audio)
-      .replace('%video', video)
-      .replace(/\%output[\.\w]*/, output);
-  });
-  return new execute(args, internal)
-  .then(function (result) {
-    if (result.exitCode === 0) {
-      return true;
+  return (ext && ext !== 'html' ? Promise.resolve(ext) : Promise.all([guessExtension(video), guessExtension(audio)]).then(arr => {
+    return arr[0].video || arr[1].video || arr[0].audio || arr[1].audio;
+  })).then(ext => {
+    if (ext) {
+      output = output.replace('.' + ext, '') + '.' + ext;
     }
-    var stderr = perct ? perct.data : result.stderr;
-    var tmp = knownErrors(stderr);
-    throw Error(tmp ? 'ffmpeg.js -> toCombined -> ' + tmp : 'check error console for the complete error report');
+    // output has extension?
+    var tmp = /\%output\.([^\s]*)/.exec(utils.prefs.toCombined);
+    if (tmp && tmp.length) {
+      output = output.replace('.' + ext, '') + '.' + tmp[1];
+    }
+    output = output.replace(' - DASH', '');
+    output = utils.file.checkDuplicate(output);
+
+    var args = utils.prefs.toCombined.split(/\s+/).map(function (s) {
+      return s.replace('%audio', audio)
+        .replace('%video', video)
+        .replace(/\%output[\.\w]*/, output);
+    });
+    return new execute(args, internal)
+    .then(function (result) {
+      if (result.exitCode === 0) {
+        return true;
+      }
+      var stderr = perct ? perct.data : result.stderr;
+      var tmp = knownErrors(stderr);
+      throw Error(tmp ? 'ffmpeg.js -> toCombined -> ' + tmp : 'check error console for the complete error report');
+    });
   });
 };
 

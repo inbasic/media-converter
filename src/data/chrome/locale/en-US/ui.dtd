@@ -18,8 +18,8 @@
 <!ENTITY tab8.label "Cut Video">
 <!ENTITY tab8.accesskey "u">
 <!ENTITY tabpanel3.label1 "Extractor Engine:">
-<!ENTITY tabpanel3.label2 "FFmpeg(binary) Location">
-<!ENTITY tabpanel3.label3 "FFmpeg(binary) Download Links:">
+<!ENTITY tabpanel3.label2 "FFmpeg (binary) Location">
+<!ENTITY tabpanel3.label3 "Download Links for FFmpeg (binary):">
 <!ENTITY tabpanel3.label4 "Windows">
 <!ENTITY tabpanel3.label5 "Mac">
 <!ENTITY tabpanel3.label6 "Linux">
