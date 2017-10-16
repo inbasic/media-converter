@@ -2,35 +2,34 @@
 
 var converter = {};
 
-chrome.storage.local.get('version', (obj) => {
-  let version = chrome.runtime.getManifest().version;
-  if (obj.version !== version) {
+chrome.storage.local.get('version', prefs => {
+  const version = chrome.runtime.getManifest().version;
+  if (prefs.version !== version) {
     window.setTimeout(() => {
       chrome.storage.local.set({version}, () => {
         chrome.tabs.create({
           url: 'http://add0n.com/media-converter.html?version=' +
             version + '&type=' +
-            (obj.version ? ('upgrade&p=' + obj.version) : 'install')
+            (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
         });
       });
     }, 3000);
   }
 });
 
-function open () {
-  let screenWidth = screen.availWidth;
-  let screenHeight = screen.availHeight;
+function open() {
+  const {availWidth, availHeight} = screen;
   chrome.storage.local.get({
     width: 700,
     height: 600
   }, prefs => {
-    function create () {
+    function create() {
       chrome.windows.create({
         url: chrome.extension.getURL('data/converter/index.html'),
         width: prefs.width,
         height: prefs.height,
-        left: Math.round((screenWidth - prefs.width) / 2),
-        top: Math.round((screenHeight - prefs.height) / 2),
+        left: Math.round((availWidth - prefs.width) / 2),
+        top: Math.round((availHeight - prefs.height) / 2),
         type: 'popup'
       }, w => converter = w);
     }

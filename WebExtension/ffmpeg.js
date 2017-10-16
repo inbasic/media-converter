@@ -1,15 +1,15 @@
 /* globals Native, vCompare, ffmpeg */
 'use strict';
 
-var FFmpeg = function (path) {
+var FFmpeg = function(path) {
   Native.call(this);
   this.callbacks = [];
   this.jobs = [];
   this.busy = false;
   this.callback = null;
-  this.key = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    let r = Math.random() * 16 | 0,
-      v = c === 'x' ? r : r & 0x3 | 0x8;
+  this.key = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : r & 0x3 | 0x8;
     return v.toString(16);
   });
   this.config = {
@@ -22,13 +22,13 @@ var FFmpeg = function (path) {
       savein: path.savein
     }
   };
-  this.log = function () {
+  this.log = function() {
     console.error.apply(console, arguments);
   };
-  this.log = function () {
+  this.log = function() {
     console.error('number of active jobs', this.config.queue);
   };
-  this.onMessage((response) => {
+  this.onMessage(response => {
     if (this.callback) {
       this.callback(response);
       this.callback = null;
@@ -67,26 +67,26 @@ var FFmpeg = function (path) {
 };
 FFmpeg.prototype = Object.create(Native.prototype);
 
-FFmpeg.prototype.on = function (id, callback) {
+FFmpeg.prototype.on = function(id, callback) {
   this.callbacks[id] = this.callbacks[id] || [];
   this.callbacks[id].push(callback);
 };
-FFmpeg.prototype.emit = function (id, value) {
+FFmpeg.prototype.emit = function(id, value) {
   (this.callbacks[id] || []).forEach(c => c(value));
 };
 
-FFmpeg.prototype.convert = function () {
+FFmpeg.prototype.convert = function() {
   return new Promise((resolve, reject) => {
     if (this.jobs.length && !this.busy) {
       this.busy = true;
       this.counter();
-      let job = this.jobs.shift();
+      const job = this.jobs.shift();
       let name = job.files[0].name;
       let extension = name.split('.').pop();
       name = name.replace('.' + extension, '');
       name = name.replace('- DASH', '');
 
-      let args = [];
+      const args = [];
       if (job.mode === 'mp3' && job.recipe.quality === 'variable') {
         args.push('-qscale:a', job.recipe.bitrate);
         extension = 'mp3';
@@ -172,7 +172,7 @@ FFmpeg.prototype.convert = function () {
         }
         if (job.recipe.output.video.size) {
           args.push('-s', job.recipe.output.video.size);
-          let [width, height] = job.recipe.output.video.size.split('x');
+          const [width, height] = job.recipe.output.video.size.split('x');
           args.push('-aspect', width + ':' + height);
         }
       }
@@ -180,9 +180,8 @@ FFmpeg.prototype.convert = function () {
       return this.createUnique(this.config.user.savein, name, extension).then(output => {
         args.push(output);
 
-        return Promise.all(job.files.map(file => {
-          return this.send(file);
-        })).then(files => {
+        return Promise.all(job.files.map(file => this.send(file)))
+        .then(files => {
           if (job.mode === 'shift') {
             args.unshift('-itsoffset', job.recipe.time, '-i', files[0]);
           }
@@ -200,11 +199,11 @@ FFmpeg.prototype.convert = function () {
   });
 };
 
-FFmpeg.prototype.find = function () {
+FFmpeg.prototype.find = function() {
   return new Promise((resolve, reject) => {
-    this.callback = function (r) {
+    this.callback = function(r) {
       if (r && r.code === 0) {
-        let path = r.stdout.trim();
+        const path = r.stdout.trim();
         this.config.ffmpeg.path = path;
         resolve(path);
       }
@@ -221,11 +220,11 @@ FFmpeg.prototype.find = function () {
   });
 };
 
-FFmpeg.prototype.createUnique = function (root, name, extension) {
+FFmpeg.prototype.createUnique = function(root, name, extension) {
   return new Promise((resolve, reject) => {
-    function check (files, name, extension, index = 0) {
-      let leafname = name.replace(/\-\d+$/, '') + (index ? '-' + index : '') + '.' + extension;
-      for (let n of files) {
+    function check(files, name, extension, index = 0) {
+      const leafname = name.replace(/-\d+$/, '') + (index ? '-' + index : '') + '.' + extension;
+      for (const n of files) {
         if (n.endsWith(leafname)) {
           return check(files, name, extension, index + 1);
         }
@@ -233,7 +232,7 @@ FFmpeg.prototype.createUnique = function (root, name, extension) {
       return leafname;
     }
 
-    this.callback = function (obj) {
+    this.callback = function(obj) {
       if (obj.error) {
         reject(new Error(obj.error));
       }
@@ -245,10 +244,10 @@ FFmpeg.prototype.createUnique = function (root, name, extension) {
   });
 };
 
-FFmpeg.prototype.init = function () {
+FFmpeg.prototype.init = function() {
   return new Promise((resolve, reject) => {
     let me = this;
-    this.callback = function (response) {
+    this.callback = function(response) {
       if (response) {
         me.config.native.version = response.version;
         me.config.user.home = (response.env.HOME || response.env.USERPROFILE);
@@ -277,9 +276,9 @@ FFmpeg.prototype.init = function () {
   });
 };
 
-FFmpeg.prototype.download = function () {
+FFmpeg.prototype.download = function() {
   return new Promise((resolve, reject) => {
-    this.callback = function (obj) {
+    this.callback = function(obj) {
       if (obj.code === 0) {
         this.config.ffmpeg.path = obj.path;
         resolve(obj.path);
@@ -289,7 +288,7 @@ FFmpeg.prototype.download = function () {
       }
     };
     let name = 'ffmpeg-';
-    let platform = navigator.platform;
+    const platform = navigator.platform;
     if (platform === 'Win32') {
       name += 'win32-ia32.exe';
     }
@@ -305,13 +304,13 @@ FFmpeg.prototype.download = function () {
     else {
       name += 'linux-ia32';
     }
-    let req = new window.XMLHttpRequest();
+    const req = new window.XMLHttpRequest();
     req.open('GET', 'https://api.github.com/repos/inbasic/ffmpeg/releases/latest');
     req.responseType = 'json';
     req.onload = () => {
-      let assests = req.response.assets.filter(o => o.name === name);
+      const assests = req.response.assets.filter(o => o.name === name);
       if (assests.length) {
-        let uri = new URL(assests[0].browser_download_url); // jshint ignore:line
+        const uri = new URL(assests[0].browser_download_url); // jshint ignore:line
         this.get({
           hostname: uri.hostname,
           port: 443,
@@ -332,9 +331,9 @@ FFmpeg.prototype.download = function () {
   });
 };
 
-FFmpeg.prototype.server = function () {
+FFmpeg.prototype.server = function() {
   return new Promise((resolve, reject) => {
-    this.callback = function (res) {
+    this.callback = function(res) {
       if (res.code === 0) {
         resolve();
       }
@@ -346,13 +345,13 @@ FFmpeg.prototype.server = function () {
   });
 };
 
-FFmpeg.prototype.send = function (file) {
-  let path = this.config.user.tmpdir + this.config.user.separator + parseInt(Math.random() * 1000) + '_' + file.name;
+FFmpeg.prototype.send = function(file) {
+  const path = this.config.user.tmpdir + this.config.user.separator + parseInt(Math.random() * 1000) + '_' + file.name;
   this.log('info', 'Saving a temp file in ' + path);
   return new Promise((resolve, reject) => {
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.onloadend = () => {
-      let r = new window.XMLHttpRequest();
+      const r = new window.XMLHttpRequest();
       r.responseType = 'text';
       r.onload = () => {
         if (r.status === 200) {
@@ -362,7 +361,7 @@ FFmpeg.prototype.send = function (file) {
           reject(new Error('Error in transferring data; ' + r.statusText));
         }
       };
-      r.onerror = (e) => {
+      r.onerror = e => {
         console.error(e);
         reject(new Error('Error in transferring data; ' + e.message));
       };
@@ -384,14 +383,14 @@ FFmpeg.prototype.send = function (file) {
       r.setRequestHeader('api-key', this.key);
       r.send(reader.result);
     };
-    reader.onerror = (e) => reject(e);
+    reader.onerror = e => reject(e);
     reader.readAsArrayBuffer(file);
   });
 };
 
-FFmpeg.prototype.cleanup = function () {
+FFmpeg.prototype.cleanup = function() {
   return new Promise((resolve, reject) => {
-    this.callback = function (res) {
+    this.callback = function(res) {
       if (res.code === 0) {
         resolve();
       }

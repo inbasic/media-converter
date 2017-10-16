@@ -1,21 +1,18 @@
 /* globals element, ffmpeg, os */
 'use strict';
 
-var os = 'windows';
-if (navigator.userAgent.indexOf('Mac') !== -1) {
-  os = 'mac';
-}
-else if (navigator.userAgent.indexOf('Linux') !== -1) {
-  os = 'linux';
-}
+var os = navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : (
+  navigator.userAgent.indexOf('Linux') !== -1 ? 'linux' : 'windows'
+);
+
 document.documentElement.dataset.platform = os;
 
 document.addEventListener('change', e => {
-  let target = e.target;
-  let id = target.dataset.for;
+  const target = e.target;
+  const id = target.dataset.for;
   // tabs
   if (id && !target.disabled && target.checked) {
-    let panel = document.getElementById(id);
+    const panel = document.getElementById(id);
     element.panels.list.filter(e => e !== panel).forEach(e => e.dataset.selected = false);
     panel.dataset.selected = true;
   }
@@ -25,7 +22,7 @@ document.addEventListener('change', e => {
   }
   // samples
   if (target.dataset.cmd === 'fill-sample-values') {
-    let [vbr = '', vtr = '', abr = ''] = target.value.split(',');
+    const [vbr = '', vtr = '', abr = ''] = target.value.split(',');
     console.error(target.value);
     element.custom.output.audio.rate = abr;
     element.custom.output.video.rate = vbr;
@@ -33,19 +30,17 @@ document.addEventListener('change', e => {
   }
 });
 // user preferences
-document.addEventListener('keyup', e => {
-  let target = e.target;
-  let pref = target.dataset.pref;
+document.addEventListener('keyup', ({target}) => {
+  const pref = target.dataset.pref;
   if (pref) {
     target.parentNode.querySelector('[type=button]').disabled = target.value === target.dataset.value;
   }
 });
-document.addEventListener('click', e => {
-  let target = e.target;
-  let cmd = e.target.dataset.cmd;
+document.addEventListener('click', ({target}) => {
+  const cmd = target.dataset.cmd;
   if (cmd === 'save-preference') {
-    let input = target.parentNode.querySelector('[type=text]');
-    let pref = input.dataset.pref;
+    const input = target.parentNode.querySelector('[type=text]');
+    const pref = input.dataset.pref;
     chrome.storage.local.set({
       [pref]: input.value
     }, () => {
@@ -59,7 +54,7 @@ document.addEventListener('click', e => {
   }
   else if (cmd === 'download-native') {
     element.instruction.parent.dataset.working = true;
-    let req = new window.XMLHttpRequest();
+    const req = new window.XMLHttpRequest();
     req.open('GET', 'https://api.github.com/repos/andy-portmen/native-client/releases/latest');
     req.responseType = 'json';
     req.onload = () => {
@@ -90,7 +85,7 @@ document.addEventListener('click', e => {
   else if (cmd === 'update-ffmpeg') {
     document.body.dataset.working = true;
     element.busy.parent.dataset.working = true;
-    ffmpeg.download().then((path) => {
+    ffmpeg.download().then(path => {
       element.busy.parent.dataset.working = false;
       document.body.dataset.working = false;
       return path;
@@ -108,14 +103,14 @@ document.addEventListener('click', e => {
   }
 });
 //resize
-(function (id) {
-  function resize () {
+(function(id) {
+  function resize() {
     chrome.storage.local.set({
       width: window.outerWidth,
       height: window.outerHeight
     });
   }
-  function check () {
+  function check() {
     window.clearTimeout(id);
     id = window.setTimeout(resize, 1000);
   }

@@ -1,19 +1,19 @@
 /* globals element, ffmpeg, log */
 'use strict';
 
-document.addEventListener('dragover', (e) => {
+document.addEventListener('dragover', e => {
   e.preventDefault();
   e.stopPropagation();
   e.dataTransfer.dropEffect = 'none';
 }, false);
 
-function drop (e) {
+function drop(e) {
   e.stopPropagation();
   e.preventDefault();
-  let files = e.target.files || e.dataTransfer.files; // FileList object
-  let mode = element.tabs.active.dataset.for;
-  let recipe = (function () {
-    let options = {};
+  const files = e.target.files || e.dataTransfer.files; // FileList object
+  const mode = element.tabs.active.dataset.for;
+  const recipe = (function() {
+    const options = {};
     if (mode === 'mp3') {
       options.quality = element.mp3.quality;
       options.bitrate = element.mp3.bitrate[options.quality];
@@ -78,7 +78,7 @@ function drop (e) {
   }
 }
 element.drag.input.addEventListener('change', drop);
-element.drag.div.addEventListener('dragover', (e) => {
+element.drag.div.addEventListener('dragover', e => {
   if (e.dataTransfer.types.indexOf('Files') !== -1) {
     e.preventDefault();
     e.stopPropagation();

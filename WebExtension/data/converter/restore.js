@@ -4,7 +4,7 @@
 var restore = new EventEmitter();
 
 document.addEventListener('change', e => {
-  let target = e.target;
+  const target = e.target;
   if (target.dataset.restore) {
     chrome.storage.local.set({
       'session-restore': [...document.querySelectorAll('[data-restore]')].map(e => {
@@ -23,14 +23,14 @@ document.addEventListener('change', e => {
   }
 });
 
-restore.on('restore', (callback) => {
+restore.on('restore', callback => {
   chrome.storage.local.get({
     'session-restore': []
   }, prefs => {
     prefs['session-restore'].forEach(o => {
-      let element = document.querySelector(`[data-restore="${o.id}"]`);
+      const element = document.querySelector(`[data-restore="${o.id}"]`);
       if (element) {
-        element[typeof(o.value) === 'boolean' ? 'checked' : 'value'] = o.value;
+        element[typeof o.value === 'boolean' ? 'checked' : 'value'] = o.value;
         element.dispatchEvent(new Event('change', {bubbles: true}));
       }
     });

@@ -2,10 +2,10 @@
 'use strict';
 
 var ffmpeg = {
-  emit: function () {}
+  emit: function() {}
 };
 
-function unhandledrejection (msg) {
+function unhandledrejection(msg) {
   ffmpeg.log('error', msg);
   ffmpeg.busy = false;
   ffmpeg.counter();
@@ -28,11 +28,11 @@ chrome.storage.local.get({
     tmpdir: prefs['tmpdir-path'],
     port: prefs['server-port']
   });
-  ffmpeg.log = function (type, e = '-') {
+  ffmpeg.log = function(type, e = '-') {
     log.emit(type, e.message || e);
   };
-  ffmpeg.counter = function () {
-    let queue = ffmpeg.jobs.length + (this.busy ? 1 : 0);
+  ffmpeg.counter = function() {
+    const queue = ffmpeg.jobs.length + (this.busy ? 1 : 0);
     if (queue) {
       document.title = 'Media Converter (' + queue + ')';
     }
@@ -82,7 +82,7 @@ chrome.storage.local.get({
       return ffmpeg.find().catch(e => {
         if (window.confirm('For the converter to work, FFmpeg command-line tool is needed.\nShould I get it now?')) {
           element.busy.parent.dataset.working = true;
-          return ffmpeg.download().then((path) => {
+          return ffmpeg.download().then(path => {
             element.busy.parent.dataset.working = false;
             return path;
           });
