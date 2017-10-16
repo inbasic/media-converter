@@ -19,7 +19,8 @@ var FFmpeg = function(path) {
       path: path.ffmpeg
     },
     user: {
-      savein: path.savein
+      savein: path.savein,
+      tmpdir: path.tmpdir
     }
   };
   this.log = function() {
@@ -246,7 +247,7 @@ FFmpeg.prototype.createUnique = function(root, name, extension) {
 
 FFmpeg.prototype.init = function() {
   return new Promise((resolve, reject) => {
-    let me = this;
+    const me = this;
     this.callback = function(response) {
       if (response) {
         me.config.native.version = response.version;
@@ -277,11 +278,39 @@ FFmpeg.prototype.init = function() {
 };
 
 FFmpeg.prototype.download = function() {
+  function download(filename, url) {
+    return new Promise((resolve, reject) => {
+      chrome.downloads.download({url, filename}, id => {
+        function observe(d) {
+          if (d.id === id && d.state) {
+            if (d.state.current === 'complete' || d.state.current === 'interrupted') {
+              chrome.downloads.onChanged.removeListener(observe);
+              if (d.state.current === 'complete') {
+                chrome.downloads.search({id}, ([d]) => {
+                  if (d) {
+                    resolve(d);
+                  }
+                  else {
+                    reject('I am not able to find the downloaded file!');
+                  }
+                });
+              }
+              else {
+                reject('The downloading job got interrupted');
+              }
+            }
+          }
+        }
+        chrome.downloads.onChanged.addListener(observe);
+      });
+    });
+  }
+
   return new Promise((resolve, reject) => {
     this.callback = function(obj) {
       if (obj.code === 0) {
-        this.config.ffmpeg.path = obj.path;
-        resolve(obj.path);
+        this.config.ffmpeg.path = obj.target;
+        resolve(obj.target);
       }
       else {
         reject(obj.error);
@@ -310,23 +339,21 @@ FFmpeg.prototype.download = function() {
     req.onload = () => {
       const assests = req.response.assets.filter(o => o.name === name);
       if (assests.length) {
-        const uri = new URL(assests[0].browser_download_url); // jshint ignore:line
-        this.get({
-          hostname: uri.hostname,
-          port: 443,
-          path: uri.pathname,
-          timeout: 120 * 1000,
-          filepath: this.config.user.home +
-            this.config.user.separator +
-            (navigator.platform.startsWith('Win') ? 'ffmpeg.exe' : 'ffmpeg'),
-          chmod: '0777'
-        });
+        const filename = navigator.platform.startsWith('Win') ? 'ffmpeg.exe' : 'ffmpeg';
+        const url = assests[0].browser_download_url;
+        download(filename, url).then(d => this.cut({
+          source: d.filename,
+          target: this.config.user.home +
+            this.config.user.separator + filename,
+          chmod: '0777',
+          delete: true
+        })).catch(reject);
       }
       else {
         reject('Cannot find ' + name + ' in the list. Please download and install FFmpeg manually.');
       }
     };
-    req.onerror = e => reject(e);
+    req.onerror = reject;
     req.send();
   });
 };

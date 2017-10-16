@@ -60,13 +60,8 @@ Native.prototype['clean-tmp'] = function() {
     cmd: 'clean-tmp'
   });
 };
-Native.prototype.get = function(obj) {
+Native.prototype.cut = function(obj) {
   this.channel.postMessage(Object.assign(obj, {
-    cmd: 'download',
-    hostname: obj.hostname,
-    port: obj.port,
-    path: obj.path,
-    filepath: obj.filepath,
-    chmod: obj.chmod
+    cmd: 'copy',
   }));
 };

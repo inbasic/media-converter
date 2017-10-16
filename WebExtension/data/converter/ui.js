@@ -23,7 +23,6 @@ document.addEventListener('change', e => {
   // samples
   if (target.dataset.cmd === 'fill-sample-values') {
     const [vbr = '', vtr = '', abr = ''] = target.value.split(',');
-    console.error(target.value);
     element.custom.output.audio.rate = abr;
     element.custom.output.video.rate = vbr;
     element.custom.output.video.tolerance = vtr;

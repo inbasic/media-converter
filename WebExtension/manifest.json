@@ -3,7 +3,7 @@
   "short_name": "imconverter",
   "description": "Easy to use video and audio converter and muxer",
   "author": "InBasic",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -35,7 +35,8 @@
   },
   "applications": {
     "gecko": {
-      "id": "{0ff128a1-c286-4e73-bffa-9ae879b244d5}"
+      "id": "{0ff128a1-c286-4e73-bffa-9ae879b244d5}",
+      "strict_min_version": "52.0"
     }
   }
 }
