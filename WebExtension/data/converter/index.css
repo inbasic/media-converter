@@ -1,0 +1,314 @@
+html {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: Roboto,sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  padding: 0;
+  margin: 5px 5px 0 5px;
+  height: calc(100% - 5px);
+}
+body:not([data-working=true]) #busy {
+  display: none;
+}
+#busy {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8) url('images/busy.svg') no-repeat center center;
+  background-size: 128px;
+  z-index: 2;
+}
+body:not([data-crashed=true]) #crash {
+  display: none;
+}
+body:not([data-instruction=true]) #instruction {
+  display: none;
+}
+#instruction,
+#crash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 50px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#busy[data-working=true],
+#instruction[data-working=true] {
+  background-image: url('images/working.svg');
+  background-position: right 10px top 10px;
+  background-repeat: no-repeat;
+}
+#busy[data-working=true]:after {
+  content: 'Downloading...';
+  color: #fff;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 150%;
+}
+#instruction a,
+#crash a {
+  color: #fff;
+}
+
+#tabs label {
+  display: block;
+}
+#tabs input {
+  display: none;
+}
+#content {
+  flex: 1;
+  display: flex;
+  margin-top: 0;
+  width: 100%;
+  overflow-y: hidden;
+}
+#console {
+  border: solid 1px #dedede;
+  margin-top: -1px;
+  height: 100px;
+}
+#panels {
+  border: solid 1px #dedede;
+  flex: 1;
+  padding: 0 10px 0 20px;
+  margin-left: -1px;
+  display: flex;
+  flex-direction: column;
+}
+#panels>div {
+  flex: 1;
+}
+#panels>div:not([data-selected=true]) {
+  display: none;
+}
+#panels #cut input[type=text] {
+  width: 100px;
+}
+#settings[data-selected=false] ~ #upload {
+  display: flex;
+}
+#upload {
+  height: 100px;
+  flex: initial !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  margin-bottom: 10px;
+  border:  dashed 2px #5f5aa6;
+  color: #5f5aa6;
+  font-size: 120%;
+}
+#upload input {
+  display: none;
+}
+#upload label {
+  cursor: pointer;
+}
+#console {
+  overflow-y: auto;
+  font: 10px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+#console>div {
+  border-left: solid 8px;
+  display: flex;
+}
+#console>div span:first-child {
+  margin-right: 10px;
+  padding-left: 10px;
+  white-space: nowrap;
+}
+#console>div[data-type=error] {
+  border-color: #ff0000;
+}
+#console>div[data-type=warning] {
+  border-color: #fb9500;
+}
+#console>div[data-type=info] {
+  border-color: #808080;
+}
+#custom {
+  flex-direction: column;
+}
+#custom select {
+  flex: 1;
+}
+#custom input[type=text] {
+  flex: 1;
+}
+#custom label {
+  width: 120px;
+}
+#custom table {
+  table-layout: fixed;
+  height: 100%;
+}
+#custom td {
+  vertical-align: top;
+}
+#custom td:first-child {
+  padding-right: 10px;
+}
+#custom td:last-child {
+  padding-left: 10px;
+  border-left: dashed 1px #dedede;
+}
+#custom ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#custom li {
+  padding: 2px 0;
+}
+#custom>div:last-child {
+  justify-content: flex-start;
+  width: 100%;
+  padding: 10px;
+}
+#samples {
+  position: relative;
+}
+#samples select {
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  right: 0;
+  width: 80px;
+}
+#tabs {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+#tabs li {
+  width: 140px;
+  height: 40px;
+  border: solid 1px #dedede;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+html[data-platform=windows] .linux {
+  display: none;
+}
+html:not([data-platform=windows]) .windows {
+  display: none;
+}
+
+table {
+  width: 100%;
+}
+input {
+  border: solid 1px #dedede;
+  height: 26px;
+  box-sizing: border-box;
+  background-color: transparent;
+  outline: none;
+}
+input:disabled {
+  background-color: #dedede;
+}
+input[type=text] {
+  width: 100%;
+  text-indent: 5px;
+}
+input[type=button] {
+  cursor: pointer;
+}
+input[type=range],
+input[type=radio] {
+  margin-right: 10px;
+}
+input[type=radio] {
+  height: auto;
+}
+input[type=button]:active {
+  opacity: 0.5;
+}
+input:disabled ~ li {
+  opacity: 0.5;
+  cursor: default;
+}
+input:checked ~ li {
+  background-color: #5f5aa6;
+  border: solid 1px #5f5aa6;
+  color: #fff;
+  position: relative;
+  background-color: #5f5aa6;
+}
+input:checked ~ li:after {
+  left: 100%;
+  top: calc(50% - 12px);
+  position: absolute;
+  content: " ";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12.5px 0 12.5px 10px;
+  border-color: transparent transparent transparent #5f5aa6;
+}
+select {
+  outline: none;
+  border: solid 1px #dedede;
+  border-radius: 0;
+  -webkit-appearance: none;
+  height: 26px;
+  text-indent: 5px;
+  background: url('images/arrow.svg') no-repeat center right 5px;
+  padding-right: 20px;
+  background-size: 16px;
+  width: 150px;
+}
+label {
+  display: inline-flex;
+  align-items: center;
+}
+h2 {
+  text-align: center;
+}
+h3 {
+  margin: 8px 0;
+  padding: 3px;
+  font-size: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.flex {
+  display: flex;
+  align-items: center;
+}
+[flex="1"] {
+  flex: 1;
+}
+[data-cmd="save-preference"]:not(:disabled) {
+  color: #fff;
+  background-color: #4eb14d;
+  border-color: #3fa63e;
+}
+[data-for="settings"] {
+  margin-top: 10px;
+}

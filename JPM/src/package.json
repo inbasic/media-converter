@@ -5,7 +5,7 @@
   "description": "Easy to use video and audio converter and muxer",
   "author": "InBasic",
   "license": "MPL 2.0",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "./lib/main.js",
   "permissions": {
     "private-browsing": true,

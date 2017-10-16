@@ -257,8 +257,9 @@
 </hbox>
 <hbox id="statusbar" align="center">
   <label pack="center" flex="1" crop="center"/>
+  <label class="text-link" href="https://addons.mozilla.org/firefox/addon/media-conversion-tool/" value="WebExtension Version"/>
   <label class="text-link" href="https://github.com/inbasic/media-converter/issues" value="Bug Reporter"/>
-  <label class="text-link" href="http://firefox.add0n.com/media-converter.html?type=UI" value="FAQ page"/>
+  <label class="text-link" href="http://firefox.add0n.com/media-converter.html?type=UI" value="FAQ Page"/>
 </hbox>
 
 <script type='application/javascript' src="ui.js"/>

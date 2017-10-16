@@ -98,6 +98,7 @@ var windows = {
     return win;
   },
   openHome: (extra) => tabs.open(config.urls.homepage + (extra ? '?' + extra : '')),
+  openTab: url => tabs.open(url),
   openOptions: () => windowUtils.getMostRecentBrowserWindow().BrowserOpenAddonsMgr('addons://detail/' + encodeURIComponent(self.id)),
   getActive: () => windowUtils.getMostRecentBrowserWindow()
 };

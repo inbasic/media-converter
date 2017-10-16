@@ -252,7 +252,25 @@ app.on('no-ffmpeg', function () {
   );
 });
 app.on('ffmpeg-installed', function () {
-  $('notificationbox').removeAllNotifications();
+  var notificationbox = $('notificationbox');
+  notificationbox.removeAllNotifications();
+
+  if (!background.utils.prefs.webextension) {
+    var buttons = [{
+      label: 'Give it a try',
+      accessKey: 'G',
+      callback: function () {
+        background.utils.windows.openTab('https://addons.mozilla.org/firefox/addon/media-conversion-tool/')
+      }
+    }];
+    notificationbox.appendNotification(
+      'WebExtension version of Media Converter add-on is now available which is compatible with Firefox 57.',
+      'try_webextension',
+      root + 'data/images/notification-info.png',
+      notificationbox.PRIORITY_INFO_MEDIUM, buttons
+    );
+    background.utils.prefs.webextension = true;
+  }
 });
 function canOperate () {
   connect.remote.register('can-operate', function (result) {
