@@ -225,6 +225,7 @@ table {
 }
 input {
   border: solid 1px #dedede;
+  border-radius: 0;
   height: 26px;
   box-sizing: border-box;
   background-color: transparent;

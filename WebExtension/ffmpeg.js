@@ -24,10 +24,7 @@ var FFmpeg = function(path) {
     }
   };
   this.log = function() {
-    console.error.apply(console, arguments);
-  };
-  this.log = function() {
-    console.error('number of active jobs', this.config.queue);
+    console.log('number of active jobs', this.config.queue);
   };
   this.onMessage(response => {
     if (this.callback) {
@@ -389,7 +386,6 @@ FFmpeg.prototype.send = function(file) {
         }
       };
       r.onerror = e => {
-        console.error(e);
         reject(new Error('Error in transferring data; ' + e.message));
       };
       r.open('PUT', 'http://127.0.0.1:' + this.config.port);
