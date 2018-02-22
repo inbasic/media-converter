@@ -183,7 +183,15 @@ FFmpeg.prototype.convert = function() {
           if (job.mode === 'shift') {
             args.unshift('-itsoffset', job.recipe.time, '-i', files[0]);
           }
-          files.forEach(file => args.unshift('-i', file));
+          if (job.mode !== 'concat') {
+            files.forEach(file => args.unshift('-i', file));
+          }
+          else {
+            args.unshift('-c', 'copy');
+            args.unshift('concat:' + files.join('|'));
+            args.unshift('-i');
+          }
+
           args.unshift('-hide_banner', '-nostdin');
 
           this.log('warning', 'Command-line options: ' + args.join(', '));

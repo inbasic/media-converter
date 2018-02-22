@@ -61,7 +61,7 @@ function drop(e) {
     return options;
   })();
   //
-  if (mode === 'muxer') {
+  if (mode === 'muxer' || mode === 'concat') {
     ffmpeg.emit('job', {
       files: [...files],
       mode,

@@ -35,6 +35,7 @@
       <label><input data-restore="tabs-10" disabled="true" type="radio" name="tabs" data-for="custom"><li>Custom Converter</li></label>
       <label><input data-restore="tabs-2" disabled="true" type="radio" name="tabs" data-for="extract"><li>Audio Extractor</li></label>
       <label><input data-restore="tabs-3" disabled="true" type="radio" name="tabs" data-for="muxer"><li>Video Combiner</li></label>
+      <label><input data-restore="tabs-11" disabled="true" type="radio" name="tabs" data-for="concat"><li>Concatenating files</li></label>
       <label><input data-restore="tabs-4" disabled="true" type="radio" name="tabs" data-for="volume"><li>Volume Adjuster</li></label>
       <label><input data-restore="tabs-5" disabled="true" type="radio" name="tabs" data-for="scale"><li>Video Scaler</li></label>
       <label><input data-restore="tabs-6" disabled="true" type="radio" name="tabs" data-for="rotate"><li>Video Rotator</li></label>
@@ -363,6 +364,10 @@
       <div id="muxer">
         <h2>Video and Audio Combiner</h2>
         <p>Replace audio track of a video file with a new audio track. If video file already has audio, this track will be overwritten by the new one. There is no setting for this conversion, just select a video file and an audio file.</p>
+      </div>
+      <div id="concat">
+        <h2>Concatenating media files</h2>
+        <p>Drop multiple media files with exactly the same codec and codec parameters to combine them into a single media file. Note that the media files need to be in the correct order. If they are not in the correct order make sure to rename them in a sequential number order first.</p>
       </div>
       <div id="volume">
         <h2>Audio Volume Adjuster</h2>
