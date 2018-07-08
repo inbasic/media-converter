@@ -38,4 +38,8 @@ You can update FFmpeg executable either from the "Settings" tab or manually from
 Is "Temporary Directory" field set to a reachable local directory?`);
     element.tabs.list.pop().click();
   }
+  else if (msg.indexOf('Output file #0 does not contain any stream') !== -1) {
+    window.alert('The input file does not seem to be a media file. Please double check the input file.');
+    element.tabs.list.pop().click();
+  }
 });

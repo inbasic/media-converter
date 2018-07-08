@@ -53,6 +53,9 @@ body:not([data-instruction=true]) #instruction {
   background-position: right 10px top 10px;
   background-repeat: no-repeat;
 }
+#instruction {
+  line-height: 16px;
+}
 #busy[data-working=true]:after {
   content: 'Downloading...';
   color: #fff;
@@ -309,6 +312,14 @@ h3 {
   color: #fff;
   background-color: #4eb14d;
   border-color: #3fa63e;
+}
+[data-cmd="save-preference"]:disabled {
+  cursor: default;
+}
+[data-cmd="support"] {
+  background-color: #439c43;
+  color: #fff;
+  border-color: #327332;
 }
 [data-for="settings"] {
   margin-top: 10px;

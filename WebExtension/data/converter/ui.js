@@ -51,6 +51,20 @@ document.addEventListener('click', ({target}) => {
   else if (cmd === 'restart') {
     window.location.reload();
   }
+  else if (cmd === 'support') {
+    chrome.tabs.create({
+      url: chrome.runtime.getManifest().homepage_url + '?rd=donate'
+    });
+  }
+  else if (cmd === 'reset') {
+    if (window.confirm('Are you sure you want to reset all the settings to the factory defaults?')) {
+      localStorage.clear();
+      chrome.storage.local.clear(() => {
+        chrome.runtime.reload();
+        window.close();
+      });
+    }
+  }
   else if (cmd === 'download-native') {
     element.instruction.parent.dataset.working = true;
     const req = new window.XMLHttpRequest();

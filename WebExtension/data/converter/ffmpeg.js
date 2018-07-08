@@ -102,7 +102,7 @@ chrome.storage.local.get({
   // restoring user settings
   .then(() => restore.emit('restore', () => document.body.dataset.working = false))
   // welcome message
-  .then(() => ffmpeg.log('info', 'Lets convert your media files!'))
+  .then(() => ffmpeg.log('info', 'Select a tab then drag one or multiple media files into the designated box. All the media files will be downloaded to the directory that is set in the settings tab (default directory is your Desktop directory).'))
   // catching errors
   .catch(e => {
     console.error(e);

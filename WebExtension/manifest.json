@@ -3,7 +3,7 @@
   "short_name": "imconverter",
   "description": "Easy to use video and audio converter and muxer",
   "author": "InBasic",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -17,8 +17,11 @@
   "homepage_url": "http://add0n.com/media-converter.html",
   "icons": {
     "16": "data/icons/16.png",
+    "19": "data/icons/19.png",
     "32": "data/icons/32.png",
+    "38": "data/icons/38.png",
     "48": "data/icons/48.png",
+    "64": "data/icons/64.png",
     "128": "data/icons/128.png"
   },
   "background": {
@@ -30,7 +33,11 @@
   "browser_action": {
     "default_icon": {
       "16": "data/icons/16.png",
-      "32": "data/icons/32.png"
+      "19": "data/icons/19.png",
+      "32": "data/icons/32.png",
+      "38": "data/icons/38.png",
+      "48": "data/icons/48.png",
+      "64": "data/icons/64.png"
     }
   },
   "applications": {

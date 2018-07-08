@@ -4,7 +4,7 @@ var Native = function() {
   this.channel = chrome.runtime.connectNative('com.add0n.node');
   this.platform = navigator.platform.startsWith('Win') ? 'Windows' : navigator.platform;
 };
-//Events
+// Events
 Native.prototype.onDisconnect = function(onDisconnect) {
   this.channel.onDisconnect.addListener(onDisconnect);
 };
@@ -14,7 +14,7 @@ Native.prototype.onMessage = function(onMessage) {
 // Actions
 Native.prototype.toString = function(msg) {
   if (msg.data && msg.type === 'Buffer') {
-    return String.fromCharCode.apply(String, msg.data);
+    return String.fromCharCode(...msg.data);
   }
   return msg.data;
 };
@@ -62,6 +62,6 @@ Native.prototype['clean-tmp'] = function() {
 };
 Native.prototype.cut = function(obj) {
   this.channel.postMessage(Object.assign(obj, {
-    cmd: 'copy',
+    cmd: 'copy'
   }));
 };
