@@ -380,43 +380,24 @@ FFmpeg.prototype.server = function() {
 FFmpeg.prototype.send = function(file) {
   const path = this.config.user.tmpdir + this.config.user.separator + parseInt(Math.random() * 1000) + '_' + file.name;
   this.log('info', 'Saving a temp file in ' + path);
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const r = new window.XMLHttpRequest();
-      r.responseType = 'text';
-      r.onload = () => {
-        if (r.status === 200) {
-          resolve(path);
-        }
-        else {
-          reject(new Error('Error in transferring data; ' + r.statusText));
-        }
-      };
-      r.onerror = e => {
-        reject(new Error('Error in transferring data; ' + e.message));
-      };
-      r.open('PUT', 'http://127.0.0.1:' + this.config.port);
-      // check for non-ASCII characters
-      if (!/^[ -~]+$/.test(path)) {
-        if (vCompare('0.3.1', ffmpeg.config.native.version) > 0) {
-          return reject(new Error(
-            'Support for non-ASCII characters in file-name is introduced in native-client v0.3.1. ' +
-            'Please update your native client or rename the files and try again.'
-          ));
-        }
-        r.setRequestHeader('file-path', 'enc:' + window.encodeURIComponent(path));
-      }
-      else {
-        r.setRequestHeader('file-path', path);
-      }
 
-      r.setRequestHeader('api-key', this.key);
-      r.send(reader.result);
-    };
-    reader.onerror = e => reject(e);
-    reader.readAsArrayBuffer(file);
-  });
+  // check for non-ASCII characters
+  if (/^[ -~]+$/.test(path) === false && vCompare('0.3.1', ffmpeg.config.native.version) > 0) {
+    return Promise.reject(new Error(
+      'Support for non-ASCII characters in file-name is introduced in native-client v0.3.1. ' +
+      'Please update your native client or rename the files and try again.'
+    ));
+  }
+  const epath = /^[ -~]+$/.test(path) ? path : 'enc:' + window.encodeURIComponent(path);
+  // PUT
+  return fetch('http://127.0.0.1:' + this.config.port, {
+    method: 'PUT',
+    headers: {
+      'file-path': epath,
+      'api-key': this.key
+    },
+    body: file // This is your file object
+  }).then(() => path);
 };
 
 FFmpeg.prototype.cleanup = function() {

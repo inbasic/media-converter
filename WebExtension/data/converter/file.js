@@ -49,7 +49,7 @@ function drop(e) {
       options.output = {
         format: element.custom.output.format,
         audio: {
-          rate: element.custom.output.audio.rate,
+          rate: element.custom.output.audio.rate
         },
         video: {
           size: element.custom.output.video.size,
