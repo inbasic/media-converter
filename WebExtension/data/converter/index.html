@@ -36,13 +36,14 @@
       </ul>
     </div>
   </div>
+  <div id="explore"></div>
   <div id="content">
     <ul id="tabs">
       <label><input data-restore="tabs-1" disabled="true" type="radio" name="tabs" data-for="mp3"><li>MP3 Converter</li></label>
       <label><input data-restore="tabs-10" disabled="true" type="radio" name="tabs" data-for="custom"><li>Custom Converter</li></label>
       <label><input data-restore="tabs-2" disabled="true" type="radio" name="tabs" data-for="extract"><li>Audio Extractor</li></label>
       <label><input data-restore="tabs-3" disabled="true" type="radio" name="tabs" data-for="muxer"><li>Video Combiner</li></label>
-      <label><input data-restore="tabs-11" disabled="true" type="radio" name="tabs" data-for="concat"><li>Concatenating files</li></label>
+      <label><input data-restore="tabs-11" disabled="true" type="radio" name="tabs" data-for="concat"><li>Concatenating Files</li></label>
       <label><input data-restore="tabs-4" disabled="true" type="radio" name="tabs" data-for="volume"><li>Volume Adjuster</li></label>
       <label><input data-restore="tabs-5" disabled="true" type="radio" name="tabs" data-for="scale"><li>Video Scaler</li></label>
       <label><input data-restore="tabs-6" disabled="true" type="radio" name="tabs" data-for="rotate"><li>Video Rotator</li></label>
@@ -53,7 +54,8 @@
     <div id="panels">
       <div id="mp3">
         <h2>MP3 Converter</h2>
-        <p>Convert a video or audio file into the MP3 format. Note that this conversion is lossy. It is always recommended to use "variable" bit-rate option. Adjust the following settings and drop a media file into the box to start the conversion.</p>
+        <p>Convert a video or audio file into the MP3 format. Note that this conversion is lossy. It is always recommended to use the "variable" bit-rate option. Adjust the following settings and drop a media file into the box to start the conversion. Lower bitrate will result in smaller file size.</p>
+
         Select quality:
         <table>
           <colgroup>
@@ -366,7 +368,7 @@
       </div>
       <div id="extract">
         <h2>Audio Extractor</h2>
-        <p>Extract the original audio stream from a video file. Output format will be based on the audio codec. There is no setting for this conversion, just select or drop one or more video files to extract the audio tracks. You can use the MP3 tab later to convert this audio file to MP3 format only if you need to use it on a device that does not support the current audio format.</p>
+        <p>EExtract the original audio stream from a video file. The output format will be based on the audio codec that is used in the input stream. There is no setting for this conversion, just select or drop one or more video files to extract the audio tracks from. You can use the MP3 tab later to convert this audio file to the MP3 format only if you need to use it on a device that does not support the extracted audio format.</p>
       </div>
       <div id="muxer">
         <h2>Video and Audio Combiner</h2>
@@ -374,11 +376,18 @@
       </div>
       <div id="concat">
         <h2>Concatenating media files</h2>
-        <p>Drop multiple media files with exactly the same codec and the same codec parameters to combine them into a single media file. Note that the media files need to be in the correct order. If they are not in the correct order make sure to rename them in a sequential number order first. This tool is used to combine segmented tracks.</p>
+        <p>Drop multiple media files to combine them into a single media file. Note that the media files need to be in the correct order. If they are not, make sure to rename them in a sequential numbering order first. This tool can be used to combine segmented tracks that are downloaded from popular websites. Choose the right method first, then drop the files. If the input files have the same codec and the same codec parameters, the first method is recommended to prevent re-encoding.</p>
+
+        <label><input type="radio" name="concat" data-restore="concat-1" value="concat-demuxer"> Use "concat demuxer": Use when you want to avoid a re-encode and your format does not support file level concatenation</label>
+        <br>
+        <label><input type="radio" checked="checked" name="concat" data-restore="concat-0" value="concat-protocol"> Use "concat protocol": Use with formats that support file level concatenation (MPEG-1, MPEG-2 PS, DV). Do not use with MP4</label>
+        <br>
+        <label><input type="radio" name="concat" data-restore="concat-2" value="concat-filter"> Use "concat filter": Use only with video files when your inputs do not have the same parameters (width, height, etc), or are not the same formats/codecs</label>
       </div>
       <div id="volume">
         <h2>Audio Volume Adjuster</h2>
-        <p>Reduce or increase the audio volume of a video or audio file. Adjust the range and drop the files in the designated box.</p>
+        <p>Reduce or increase the audio volume of a video or audio file. Adjust the range and drop the files in the designated box. To increase the volume more than two times, drop the converted file one more time. Note that this may cause your audio quality to drop.</p>
+
         Change volume in percent:
         <div class="flex">
           <input type="range" min=10 max=200 step=10 flex=1 data-restore="volume-ir" data-append="%" value="100%">
@@ -388,6 +397,7 @@
       <div id="scale">
         <h2>Video Size Scaler</h2>
         <p>Scale the video screen size. This option can be used to reduce video file size by reducing its screen dimension for instance. Final width of the video will be <code>(original size) * (m) / (d)</code>. Video height is calculated such that width to height ratio is intact. Adjust settings and drop the files into the designated box.</p>
+
         Divide video screen by:
         <div class="flex">
           <input type="range" min=1 max=10 step=1 flex=1 data-restore="scale-id" value=1>
@@ -402,6 +412,7 @@
       <div id="rotate">
         <h2>Video Rotator</h2>
         <p>You can rotate a video file here. This can be helpful to watch a video on a mobile device for instance. Select the rotation value and drop files into the designated box.</p>
+
         <label><input type="radio" checked="checked" name="rotate" data-restore="rotate-0" value="0"> Rotate video by 90 degrees clockwise and flip vertically</label>
         <br>
         <label><input type="radio" name="rotate" data-restore="rotate-1" value="1"> Rotate video by 90 degrees clockwise</label>
@@ -415,6 +426,7 @@
       <div id="shift">
         <h2>Audio Time Shifter</h2>
         <p>Sometimes, video and audio tracks are not synced. This tab can shift either audio or video file forward with a defined value to fix the synchronization problem.</p>
+
         <table>
           <colgroup>
             <col width="180">
@@ -432,6 +444,7 @@
       <div id="cut">
         <h2>Video Cutting Tool</h2>
         <p>If you want to cut part of a video or an audio file specify "from" time-frame and "to" time-frame and drop the file into the box. Leave the "from" box empty to start from the beginning of the track. Leave the "to" box empty to cut to the last frame. You can use the time offset in seconds from the beginning of the track or you can specify the times in <code>hh:mm:ss.m</code> format.</p>
+
         Cut the video or audio from
         <input type="text" data-restore="cut-if" placeholder="hh:mm:ss.m"> to
         <input type="text" data-restore="cut-it" placeholder="hh:mm:ss.m">
@@ -488,7 +501,7 @@
           </tr>
           <tr>
             <td>Support development</td>
-            <td><input type="button" value="Support" data-cmd="support"></td>
+            <td><input type="button" value="Support Development" data-cmd="support"></td>
           </tr>
           <tr>
             <td>Reset all settings</td>
@@ -512,5 +525,6 @@
   <script src="file.js"></script>
   <script src="ffmpeg.js"></script>
   <script src="restore.js"></script>
+  <script async src="matched.js"></script>
 </body>
 </html>

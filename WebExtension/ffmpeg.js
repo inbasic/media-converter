@@ -96,18 +96,18 @@ FFmpeg.prototype.convert = function() {
       else if (job.mode === 'extract') {
         args.push('-acodec', 'copy', '-vn');
         switch (extension) {
-          case 'weba':
-          case 'webm':
-          case 'ogg':
-          case 'vorbis':
-            extension = 'ogg';
-            break;
-          case 'mp4':
-          case 'm4a':
-            extension = 'm4a';
-            break;
-          default:
-            extension = 'mka'; // "MKA" container format can store a huge number of audio codecs.
+        case 'weba':
+        case 'webm':
+        case 'ogg':
+        case 'vorbis':
+          extension = 'ogg';
+          break;
+        case 'mp4':
+        case 'm4a':
+          extension = 'm4a';
+          break;
+        default:
+          extension = 'mka'; // "MKA" container format can store a huge number of audio codecs.
         }
       }
       else if (job.mode === 'muxer') {
@@ -147,6 +147,7 @@ FFmpeg.prototype.convert = function() {
         if (job.recipe.end) {
           args.push('-to', job.recipe.end);
         }
+        args.push('-c', 'copy');
       }
       else if (job.mode === 'custom') {
         if (job.recipe.input.audio.channels) {
@@ -178,18 +179,36 @@ FFmpeg.prototype.convert = function() {
       return this.createUnique(this.config.user.savein, name, extension).then(output => {
         args.push(output);
 
-        return Promise.all(job.files.map(file => this.send(file)))
-        .then(files => {
+        return Promise.all(job.files.map(file => this.send(file))).then(async files => {
           if (job.mode === 'shift') {
             args.unshift('-itsoffset', job.recipe.time, '-i', files[0]);
           }
-          if (job.mode !== 'concat') {
-            files.forEach(file => args.unshift('-i', file));
-          }
-          else {
+          if (job.mode === 'concat' && job.recipe.type === 'concat-protocol') {
             args.unshift('-c', 'copy');
             args.unshift('concat:' + files.join('|'));
             args.unshift('-i');
+          }
+          else if (job.mode === 'concat' && job.recipe.type === 'concat-demuxer') {
+            const blob = new Blob([files.map(file => `file '${file}'`).join('\n')]);
+            blob.name = 'files.txt';
+            const txt = await this.send(blob);
+            args.unshift(
+              '-safe', '0',
+              '-f', 'concat',
+              '-i', txt,
+              '-c', 'copy'
+            );
+          }
+          else if (job.mode === 'concat' && job.recipe.type === 'concat-filter') {
+            args.unshift('-map', '[a]', '-map', '[v]');
+            args.unshift(
+              '-filter_complex',
+              files.reverse().map((f, i) => `[${i}:v][${i}:a]`).join(' ') + ` concat=n=${files.length}:v=1:a=1 [v] [a]`
+            );
+            files.forEach(f => args.unshift('-i', f));
+          }
+          else {
+            files.forEach(file => args.unshift('-i', file));
           }
 
           args.unshift('-hide_banner', '-nostdin');

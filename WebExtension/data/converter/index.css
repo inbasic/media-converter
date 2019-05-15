@@ -4,9 +4,9 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  font-family: Roboto,sans-serif;
-  font-weight: 400;
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
   font-size: 13px;
+  font-weight: 400;
   padding: 0;
   margin: 5px 5px 0 5px;
   height: calc(100% - 5px);
@@ -103,6 +103,10 @@ body:not([data-instruction=true]) #instruction {
 }
 #panels>div:not([data-selected=true]) {
   display: none;
+}
+#panels p {
+  background-color: #f5f5f5;
+  padding: 10px;
 }
 #panels #cut input[type=text] {
   width: 100px;
@@ -205,7 +209,7 @@ body:not([data-instruction=true]) #instruction {
   user-select: none;
 }
 #tabs li {
-  width: 140px;
+  width: 160px;
   height: 40px;
   border: solid 1px #dedede;
   display: flex;
@@ -294,12 +298,19 @@ label {
 }
 h2 {
   text-align: center;
+  font-weight: 400;
 }
 h3 {
   margin: 8px 0;
   padding: 3px;
   font-size: 100%;
   background-color: rgba(0, 0, 0, 0.05);
+}
+hr {
+  border: none;
+  border-bottom: 1px #ececec dotted;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 .flex {
   display: flex;
@@ -323,4 +334,8 @@ h3 {
 }
 [data-for="settings"] {
   margin-top: 10px;
+}
+
+#explore[data-loaded=true] {
+  margin-bottom: 8px !important;
 }

@@ -36,6 +36,9 @@ function drop(e) {
       options.start = element.cut.start;
       options.end = element.cut.end;
     }
+    else if (mode === 'concat') {
+      options.type = element.concat.type;
+    }
     else if (mode === 'custom') {
       options.input = {
         audio: {

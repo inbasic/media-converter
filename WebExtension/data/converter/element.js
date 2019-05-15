@@ -54,6 +54,11 @@ element.shift = {
     return document.querySelector('#shift [type=text]').value;
   }
 };
+element.concat = {
+  get type() {
+    return document.querySelector('#concat :checked').value;
+  }
+};
 element.cut = {
   get start() {
     return document.querySelector('#cut [data-restore="cut-if"]').value;

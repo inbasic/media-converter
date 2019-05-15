@@ -91,22 +91,20 @@ chrome.storage.local.get({
       });
     }
   })
-  // setting FFmpeg path
-  .then(path => {
-    element.settings.ffmpeg.value = element.settings.ffmpeg.dataset.value = path;
-  })
-  // creating server
-  .then(() => ffmpeg.server())
-  // enabling conversion tabs
-  .then(() => element.tabs.list.forEach(tab => tab.disabled = false))
-  // restoring user settings
-  .then(() => restore.emit('restore', () => document.body.dataset.working = false))
-  // welcome message
-  .then(() => ffmpeg.log('info', 'Select a tab then drag one or multiple media files into the designated box. All the media files will be downloaded to the directory that is set in the settings tab (default directory is your Desktop directory).'))
-  // catching errors
-  .catch(e => {
-    console.error(e);
-    ffmpeg.log('error', e);
-    document.body.dataset.working = false;
-  });
+    // setting FFmpeg path
+    .then(path => element.settings.ffmpeg.value = element.settings.ffmpeg.dataset.value = path)
+    // creating server
+    .then(() => ffmpeg.server())
+    // enabling conversion tabs
+    .then(() => element.tabs.list.forEach(tab => tab.disabled = false))
+    // restoring user settings
+    .then(() => restore.emit('restore', () => document.body.dataset.working = false))
+    // welcome message
+    .then(() => ffmpeg.log('info', 'Select a tab then drag one or multiple media files into the designated box. All the media files will be downloaded to the directory that is set in the settings tab (default directory is your Desktop directory).'))
+    // catching errors
+    .catch(e => {
+      console.error(e);
+      ffmpeg.log('error', e);
+      document.body.dataset.working = false;
+    });
 });
