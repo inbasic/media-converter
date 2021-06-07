@@ -9,8 +9,8 @@ chrome.runtime.onConnect.addListener(port => {
 function open() {
   const {availWidth, availHeight} = screen;
   chrome.storage.local.get({
-    width: 700,
-    height: 600
+    width: 800,
+    height: 800
   }, prefs => {
     function create() {
       chrome.windows.create({

@@ -1,11 +1,14 @@
-/* globals FFmpeg, element, restore, log */
+/* globals WFFmpeg, NFFmpeg, Native, element, restore, log */
 'use strict';
 
-var ffmpeg = {
+let ffmpeg = {
   emit: function() {}
 };
 
 function unhandledrejection(msg) {
+  if (msg.indexOf('code=EPERM') !== -1) {
+    msg += ' (operation not permitted)';
+  }
   ffmpeg.log('error', msg);
   ffmpeg.busy = false;
   ffmpeg.counter();
@@ -18,11 +21,22 @@ chrome.storage.local.get({
   'ffmpeg-path': null,
   'savein-path': null,
   'tmpdir-path': null,
-  'server-port': 3002
+  'server-port': 3002,
+  'mode': 'native'
 }, prefs => {
+  element.settings.mode.value = prefs.mode;
+
   let isNative = false;
 
-  ffmpeg = new FFmpeg({
+  if (prefs.mode === 'wasm') {
+    Native.prototype.spawn = function(path, args) {
+      this.run(...args);
+    };
+    Native.prototype['clean-tmp'] = function() {};
+  }
+  const FFmpeg = prefs.mode === 'wasm' ? WFFmpeg : NFFmpeg;
+
+  ffmpeg = window.ffmpeg = new FFmpeg({
     ffmpeg: prefs['ffmpeg-path'],
     savein: prefs['savein-path'],
     tmpdir: prefs['tmpdir-path'],
@@ -75,6 +89,11 @@ chrome.storage.local.get({
     element.settings.savein.value = element.settings.savein.dataset.value = obj.savein;
     element.settings.tmpdir.value = element.settings.tmpdir.dataset.value = obj.tmpdir;
     element.settings.port.value = element.settings.port.dataset.value = obj.port;
+
+    element.settings.savein.disabled =
+    element.settings.tmpdir.disabled =
+    element.settings.port.disabled = prefs.mode === 'wasm';
+
     if (prefs['ffmpeg-path']) {
       return prefs['ffmpeg-path'];
     }

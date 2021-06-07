@@ -1,14 +1,16 @@
 {
   "name": "Media Converter and Muxer - Audio Tools",
-  "description": "Easy to use video and audio converter and muxer",
+  "description": "Easy to use video and audio converter and muxer based on FFmpeg multimedia command-line tool.",
   "author": "InBasic",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "manifest_version": 2,
   "permissions": [
-    "storage",
+    "storage"
+  ],
+  "optional_permissions": [
     "nativeMessaging",
-    "downloads",
-    "http://127.0.0.1/"
+    "http://127.0.0.1/",
+    "downloads"
   ],
   "homepage_url": "https://add0n.com/media-converter.html",
   "icons": {
@@ -18,7 +20,8 @@
     "38": "data/icons/38.png",
     "48": "data/icons/48.png",
     "64": "data/icons/64.png",
-    "128": "data/icons/128.png"
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png"
   },
   "background": {
     "persistent": false,
@@ -26,20 +29,6 @@
       "common.js"
     ]
   },
-  "browser_action": {
-    "default_icon": {
-      "16": "data/icons/16.png",
-      "19": "data/icons/19.png",
-      "32": "data/icons/32.png",
-      "38": "data/icons/38.png",
-      "48": "data/icons/48.png",
-      "64": "data/icons/64.png"
-    }
-  },
-  "applications": {
-    "gecko": {
-      "id": "{0ff128a1-c286-4e73-bffa-9ae879b244d5}",
-      "strict_min_version": "52.0"
-    }
-  }
+  "browser_action": {},
+  "content_security_policy": "script-src 'self' 'wasm-eval'; object-src 'self'"
 }

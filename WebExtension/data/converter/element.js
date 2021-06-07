@@ -158,6 +158,9 @@ element.custom = {
 };
 
 element.settings = {
+  get mode() {
+    return document.getElementById('mode');
+  },
   get version() {
     return document.getElementById('client-version');
   },

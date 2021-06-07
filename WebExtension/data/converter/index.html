@@ -16,8 +16,11 @@
   <div id="instruction">
     <h2>Welcome to Media Converter</h2>
     <div>
-      <p>This converter uses the well-known <a href="https://www.ffmpeg.org/" target="_blank">FFMpeg</a> command-line tool to convert your media files. Currently we support Windows, Mac OS and Linux. To enable FFMpeg integration please follow:</p>
+      <p>This converter uses the well-known <a href="https://www.ffmpeg.org/" target="_blank">FFmpeg</a> command-line tool to convert your media files. You can either use the experimental embedded FFmpeg mode or for better performance you can install the native client version.</p>
+
+      <p>Click <a href="#" id="wasm">here</a> to use embedded FFmpeg mode or follow the instruction to enable native mode:</p>
       <ul>
+        <li>Click <a href="#" id="permission">here</a> to allow native access</li>
         <li>Download <a href="#" data-cmd="download-native">this</a> minimal NodeJS native client</li>
         <li>Unzip the downloaded package</li>
         <li>Install the native client:
@@ -25,15 +28,17 @@
           <p class="linux">&#8605; Open a terminal at the root directory of the downloaded package and run <code>./install.sh</code></p>
           <p class="windows">&#8605; Double-click on <code>Install.bash</code></p>
         </li>
-        <li>Click <a href="#" data-cmd="restart">here</a> to check the native integration</li>
-        <li></li>
-        <li>Tutorials:
-          <ul>
-            <li>Windows: <a href="https://www.youtube.com/watch?v=yZAoy8SOd7o" target="_blank">YouTube</a></li>
-            <li>Mac &amp; Linux: <a href="https://www.youtube.com/watch?v=2asPoW2gJ-c" target="_blank">YouTube</a></li>
-          </ul>
-        </li>
+        <li>Click <a href="#" data-cmd="restart">here</a> to validate the native integration</li>
       </ul>
+      <p>
+
+      Tutorial:
+      <ul>
+        <li>Windows: <a href="https://www.youtube.com/watch?v=yZAoy8SOd7o" target="_blank">YouTube</a></li>
+        <li>Mac &amp; Linux: <a href="https://www.youtube.com/watch?v=2asPoW2gJ-c" target="_blank">YouTube</a></li>
+      </ul>
+
+      </p>
     </div>
   </div>
   <div id="explore"></div>
@@ -457,6 +462,20 @@
             <col width=200></col>
           </colgroup>
           <tr>
+            <td>Mode</td><td>
+              <select id="mode">
+                <option value="wasm">WASM</option>
+                <option value="native">Native Client</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p>WASM mode (experimental): In this mode, there is no need for the native FFmpeg. The extension uses the embedded FFmpeg compiled into JS. This mode does not require any permission to operate but it is only recommended for light conversions. If the conversion window crashed, please switch to the native mode.</p>
+              <p>Native Client: In this mode, you need to permit the extension to use the native client also you need to install the native client. The extension uses the native FFmpeg binary to perform your conversions. This mode is recommended if you plan to do the conversion on large files.</p>
+            </td>
+          </tr>
+          <tr>
             <td>Native client</td><td id="client-version">...</td>
           </tr>
           <tr>
@@ -518,8 +537,9 @@
 
   <script src="/utils.js"></script>
   <script src="ui.js"></script>
-  <script src="/native.js"></script>
-  <script src="/ffmpeg.js"></script>
+  <script src="/native/core.js"></script>
+  <script src="/native/ffmpeg.js"></script>
+  <script src="/wasm/ffmpeg.js"></script>
   <script src="element.js"></script>
   <script src="log.js"></script>
   <script src="file.js"></script>

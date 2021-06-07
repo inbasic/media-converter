@@ -38,7 +38,7 @@ body:not([data-instruction=true]) #instruction {
   width: 100%;
   height: 100%;
   z-index: 3;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   color: #fff;
   padding: 50px;
   box-sizing: border-box;
@@ -56,7 +56,11 @@ body:not([data-instruction=true]) #instruction {
 #instruction {
   line-height: 16px;
 }
-#busy[data-working=true]:after {
+#instruction a {
+  text-decoration: none;
+  color: #07c !important;
+}
+#busy[data-working=true]::after {
   content: 'Downloading...';
   color: #fff;
   position: absolute;
@@ -72,6 +76,9 @@ body:not([data-instruction=true]) #instruction {
   color: #fff;
 }
 
+#tabs {
+  overflow: auto;
+}
 #tabs label {
   display: block;
 }
@@ -98,10 +105,10 @@ body:not([data-instruction=true]) #instruction {
   display: flex;
   flex-direction: column;
 }
-#panels>div {
+#panels > div {
   flex: 1;
 }
-#panels>div:not([data-selected=true]) {
+#panels > div:not([data-selected=true]) {
   display: none;
 }
 #panels p {
@@ -110,6 +117,9 @@ body:not([data-instruction=true]) #instruction {
 }
 #panels #cut input[type=text] {
   width: 100px;
+}
+#settings {
+  overflow: auto;
 }
 #settings[data-selected=false] ~ #upload {
   display: flex;
@@ -121,7 +131,7 @@ body:not([data-instruction=true]) #instruction {
   justify-content: center;
   padding: 0 5px;
   margin-bottom: 10px;
-  border:  dashed 2px #5f5aa6;
+  border: dashed 2px #5f5aa6;
   color: #5f5aa6;
   font-size: 120%;
 }
@@ -135,22 +145,22 @@ body:not([data-instruction=true]) #instruction {
   overflow-y: auto;
   font: 10px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
 }
-#console>div {
+#console > div {
   border-left: solid 8px;
   display: flex;
 }
-#console>div span:first-child {
+#console > div span:first-child {
   margin-right: 10px;
   padding-left: 10px;
   white-space: nowrap;
 }
-#console>div[data-type=error] {
+#console > div[data-type=error] {
   border-color: #ff0000;
 }
-#console>div[data-type=warning] {
+#console > div[data-type=warning] {
   border-color: #fb9500;
 }
-#console>div[data-type=info] {
+#console > div[data-type=info] {
   border-color: #808080;
 }
 #custom {
@@ -187,7 +197,7 @@ body:not([data-instruction=true]) #instruction {
 #custom li {
   padding: 2px 0;
 }
-#custom>div:last-child {
+#custom > div:last-child {
   justify-content: flex-start;
   width: 100%;
   padding: 10px;
