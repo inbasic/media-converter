@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Media Converter</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body data-working=true>
+  <div id="busy"></div>
+  <div id="crash">
+    <h2>Oops! The native client just crashed!</h2>
+    <p>Please open a bug report <a href="https://github.com/inbasic/media-converter/issues" target="_blank">here</a> and describe the steps to regenerate this crash.</p>
+    <p>To restart the converter click <a href="#" data-cmd="restart">here</a></p>
+  </div>
+  <div id="instruction">
+    <h2>Welcome to Media Converter</h2>
+    <div>
+      <p>This converter uses the well-known <a href="https://www.ffmpeg.org/" target="_blank">FFmpeg</a> command-line tool to convert your media files. You can either use the experimental embedded FFmpeg mode or for better performance you can install the native client version.</p>
+
+      <p>Click <a href="#" id="wasm">here</a> to use embedded FFmpeg mode or follow the instruction to enable native mode:</p>
+      <ul>
+        <li>Click <a href="#" id="permission">here</a> to allow native access</li>
+        <li>Download <a href="#" data-cmd="download-native">this</a> minimal NodeJS native client</li>
+        <li>Unzip the downloaded package</li>
+        <li>Install the native client:
+          <br>
+          <p class="linux">&#8605; Open a terminal at the root directory of the downloaded package and run <code>./install.sh</code></p>
+          <p class="windows">&#8605; Double-click on <code>Install.bash</code></p>
+        </li>
+        <li>Click <a href="#" data-cmd="restart">here</a> to validate the native integration</li>
+      </ul>
+      <p>
+
+      Tutorial:
+      <ul>
+        <li>Windows: <a href="https://www.youtube.com/watch?v=yZAoy8SOd7o" target="_blank">YouTube</a></li>
+        <li>Mac &amp; Linux: <a href="https://www.youtube.com/watch?v=2asPoW2gJ-c" target="_blank">YouTube</a></li>
+      </ul>
+
+      </p>
+    </div>
+  </div>
+  <div id="explore"></div>
+  <div id="content">
+    <ul id="tabs">
+      <label><input data-restore="tabs-1" disabled="true" type="radio" name="tabs" data-for="mp3"><li>MP3 Converter</li></label>
+      <label><input data-restore="tabs-10" disabled="true" type="radio" name="tabs" data-for="custom"><li>Custom Converter</li></label>
+      <label><input data-restore="tabs-2" disabled="true" type="radio" name="tabs" data-for="extract"><li>Audio Extractor</li></label>
+      <label><input data-restore="tabs-3" disabled="true" type="radio" name="tabs" data-for="muxer"><li>Video Combiner</li></label>
+      <label><input data-restore="tabs-11" disabled="true" type="radio" name="tabs" data-for="concat"><li>Concatenating Files</li></label>
+      <label><input data-restore="tabs-4" disabled="true" type="radio" name="tabs" data-for="volume"><li>Volume Adjuster</li></label>
+      <label><input data-restore="tabs-5" disabled="true" type="radio" name="tabs" data-for="scale"><li>Video Scaler</li></label>
+      <label><input data-restore="tabs-6" disabled="true" type="radio" name="tabs" data-for="rotate"><li>Video Rotator</li></label>
+      <label><input data-restore="tabs-7" disabled="true" type="radio" name="tabs" data-for="shift"><li>Time Shifter</li></label>
+      <label><input data-restore="tabs-8" disabled="true" type="radio" name="tabs" data-for="cut"><li>Video Cutter</li></label>
+      <label><input data-restore="tabs-9" checked="checked" type="radio" name="tabs" data-for="settings"><li>Settings</li></label>
+    </ul>
+    <div id="panels">
+      <div id="mp3">
+        <h2>MP3 Converter</h2>
+        <p>Convert a video or audio file into the MP3 format. Note that this conversion is lossy. It is always recommended to use the "variable" bit-rate option. Adjust the following settings and drop a media file into the box to start the conversion. Lower bitrate will result in smaller file size.</p>
+
+        Select quality:
+        <table>
+          <colgroup>
+            <col width="150"></col>
+          </colgroup>
+          <tr>
+            <td><label><input type="radio" name="mp3" value="variable" data-restore="mp3-iv" checked="checked">Variable bit-rate</label></td>
+            <td>
+              <select data-restore="mp3-sv">
+                <option value="0" selected="selected">220-260 KB/s</option>
+                <option value="1">190-250 KB/s</option>
+                <option value="2">170-210 KB/s</option>
+                <option value="3">150-195 KB/s</option>
+                <option value="4">140-185 KB/s</option>
+                <option value="5">120-150 KB/s</option>
+                <option value="6">100-130 KB/s</option>
+                <option value="7">80-120 KB/s</option>
+                <option value="8">70-105 KB/s</option>
+                <option value="9">45-85 KB/s</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label><input type="radio" name="mp3" value="constant" data-restore="mp3-ci">Constant bitrate</label></td>
+            <td>
+              <select data-restore="mp3-cs">
+                <option value="320k">320 KB/s</option>
+                <option value="256k" selected="selected">256 KB/s</option>
+                <option value="224k">224 KB/s</option>
+                <option value="192k">192 KB/s</option>
+                <option value="160k">160 KB/s</option>
+                <option value="128k">128 KB/s</option>
+                <option value="112k">112 KB/s</option>
+                <option value="96k">96 KB/s</option>
+                <option value="80k">80 KB/s</option>
+                <option value="64k">64 KB/s</option>
+                <option value="48k">48 KB/s</option>
+                <option value="40k">40 KB/s</option>
+                <option value="32k">32 KB/s</option>
+                <option value="24k">24 KB/s</option>
+                <option value="16k">16 KB/s</option>
+                <option value="8k">8 KB/s</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="custom" class="flex">
+        <div flex="1">
+          <table>
+            <tr>
+              <td>
+                <h2>Muxing Settings</h2>
+                <div>
+                  <h3>Input Sampling Rate</h3>
+                  <ul>
+                    <li class="flex"><label>Video Frame Rate</label>
+                      <select data-restore="custom-ivr">
+                        <option value="" selected="selected"> - Ignore - </option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="24000/1001">23.976 Movies (24000/1001)</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="30000/1001">29.97 NTSC (30000/1001)</option>
+                        <option value="30">30</option>
+                      </select>
+                    </li>
+                    <li class="flex"><label>Audio Sampling Rate</label>
+                      <select data-restore="custom-iar">
+                        <option value="" selected="selected"> - Ignore - </option>
+                        <option value="11025">11025</option>
+                        <option value="22050">22050</option>
+                        <option value="32000">32000</option>
+                        <option value="44100">44100</option>
+                        <option value="48000">48000</option>
+                        <option value="88200">88200</option>
+                        <option value="96000">96000</option>
+                      </select>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h3>Audio</h3>
+                  <div class="flex">
+                    <label>Audio Channels</label>
+                    <select data-restore="custom-iac">
+                      <option value=""> - Ignore - </option>
+                      <option value="1">Mono (1ch)</option>
+                      <option value="2">Stereo (2ch)</option>
+                      <option value="6">5.1 (6ch)</option>
+                    </select>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <h2>Output Settings</h2>
+                <div class="flex">
+                  <label>Format</label>
+                  <select data-restore="custom-of">
+                    <option value="3g2">3GP2 (3GPP2 file format) (*.3g2)</option>
+                    <option value="3gp">3GP (3GPP file format) (*.3gp)</option>
+                    <option value="a64">a64 - video for Commodore 64 (*.a64)</option>
+                    <option value="ac3">raw AC-3 (*.ac3)</option>
+                    <option value="adts">ADTS AAC (Advanced Audio Coding) (*.adts)</option>
+                    <option value="adx">CRI ADX (*.adx)</option>
+                    <option value="aiff">Audio IFF (*.aiff)</option>
+                    <option value="alaw">PCM A-law (*.alaw)</option>
+                    <option value="amr">3GPP AMR (*.amr)</option>
+                    <option value="apng">Animated Portable Network Graphics (*.apng)</option>
+                    <option value="asf">ASF (Advanced / Active Streaming Format) (*.asf)</option>
+                    <option value="asf_stream">ASF (Advanced / Active Streaming Format) (*.asf_stream)</option>
+                    <option value="ass">SSA (SubStation Alpha) subtitle (*.ass)</option>
+                    <option value="ast">AST (Audio Stream) (*.ast)</option>
+                    <option value="au">Sun AU (*.au)</option>
+                    <option value="avi">AVI (Audio Video Interleaved) (*.avi)</option>
+                    <option value="avm2">SWF (ShockWave Flash) (AVM2) (*.avm2)</option>
+                    <option value="bit">G.729 BIT file format (*.bit)</option>
+                    <option value="caf">Apple CAF (Core Audio Format) (*.caf)</option>
+                    <option value="cavsvideo">raw Chinese AVS (Audio Video Standard) video (*.cavsvideo)</option>
+                    <option value="crc">CRC testing (*.crc)</option>
+                    <option value="dash">DASH Muxer (*.dash)</option>
+                    <option value="data">raw data (*.data)</option>
+                    <option value="daud">D-Cinema audio (*.daud)</option>
+                    <option value="dirac">raw Dirac (*.dirac)</option>
+                    <option value="dnxhd">raw DNxHD (SMPTE VC-3) (*.dnxhd)</option>
+                    <option value="dts">raw DTS (*.dts)</option>
+                    <option value="dv">DV (Digital Video) (*.dv)</option>
+                    <option value="dvd">MPEG-2 PS (DVD VOB) (*.dvd)</option>
+                    <option value="eac3">raw E-AC-3 (*.eac3)</option>
+                    <option value="f32be">PCM 32-bit floating-point big-endian (*.f32be)</option>
+                    <option value="f32le">PCM 32-bit floating-point little-endian (*.f32le)</option>
+                    <option value="f4v">F4V Adobe Flash Video (*.f4v)</option>
+                    <option value="f64be">PCM 64-bit floating-point big-endian (*.f64be)</option>
+                    <option value="f64le">PCM 64-bit floating-point little-endian (*.f64le)</option>
+                    <option value="ffm">FFM (FFserver live feed) (*.ffm)</option>
+                    <option value="ffmetadata">FFmpeg metadata in text (*.ffmetadata)</option>
+                    <option value="fifo">FIFO queue pseudo-muxer (*.fifo)</option>
+                    <option value="filmstrip">Adobe Filmstrip (*.filmstrip)</option>
+                    <option value="flac">raw FLAC (*.flac)</option>
+                    <option value="flv">FLV (Flash Video) (*.flv)</option>
+                    <option value="framecrc">framecrc testing (*.framecrc)</option>
+                    <option value="framehash">Per-frame hash testing (*.framehash)</option>
+                    <option value="framemd5">Per-frame MD5 testing (*.framemd5)</option>
+                    <option value="g722">raw G.722 (*.g722)</option>
+                    <option value="g723_1">raw G.723.1 (*.g723_1)</option>
+                    <option value="gif">GIF Animation (*.gif)</option>
+                    <option value="gsm">raw GSM (*.gsm)</option>
+                    <option value="gxf">GXF (General eXchange Format) (*.gxf)</option>
+                    <option value="h261">raw H.261 (*.h261)</option>
+                    <option value="h263">raw H.263 (*.h263)</option>
+                    <option value="h264">raw H.264 video (*.h264)</option>
+                    <option value="hash">Hash testing (*.hash)</option>
+                    <option value="hds">HDS Muxer (*.hds)</option>
+                    <option value="hevc">raw HEVC video (*.hevc)</option>
+                    <option value="hls">Apple HTTP Live Streaming (*.hls)</option>
+                    <option value="ico">Microsoft Windows ICO (*.ico)</option>
+                    <option value="idf">iCE Draw File (*.idf)</option>
+                    <option value="ilbc">iLBC storage (*.ilbc)</option>
+                    <option value="image2">image2 sequence (*.image2)</option>
+                    <option value="image2pipe">piped image2 sequence (*.image2pipe)</option>
+                    <option value="ipod">iPod H.264 MP4 (MPEG-4 Part 14) (*.ipod)</option>
+                    <option value="ircam">Berkeley/IRCAM/CARL Sound Format (*.ircam)</option>
+                    <option value="ismv">ISMV/ISMA (Smooth Streaming) (*.ismv)</option>
+                    <option value="ivf">On2 IVF (*.ivf)</option>
+                    <option value="jacosub">JACOsub subtitle format (*.jacosub)</option>
+                    <option value="latm">LOAS/LATM (*.latm)</option>
+                    <option value="lrc">LRC lyrics (*.lrc)</option>
+                    <option value="m4v">raw MPEG-4 video (*.m4v)</option>
+                    <option value="matroska">Matroska (*.matroska)</option>
+                    <option value="md5">MD5 testing (*.md5)</option>
+                    <option value="microdvd">MicroDVD subtitle format (*.microdvd)</option>
+                    <option value="mjpeg">raw MJPEG video (*.mjpeg)</option>
+                    <option value="mkvtimestamp_v2" > pts as timecode v2 format, as defined by mkvtoolnix (*.mkvtimestamp_v2)</option>
+                    <option value="mlp">raw MLP (*.mlp)</option>
+                    <option value="mmf">Yamaha SMAF (*.mmf)</option>
+                    <option value="mov">QuickTime / MOV (*.mov)</option>
+                    <option value="mp2">MP2 (MPEG audio layer 2) (*.mp2)</option>
+                    <option value="mp3">MP3 (MPEG audio layer 3) (*.mp3)</option>
+                    <option value="mp4" selected="selected">MP4 (MPEG-4 Part 14) (*.mp4)</option>
+                    <option value="mpeg">MPEG-1 Systems / MPEG program stream (*.mpeg)</option>
+                    <option value="mpeg1video">raw MPEG-1 video (*.mpeg1video)</option>
+                    <option value="mpeg2video">raw MPEG-2 video (*.mpeg2video)</option>
+                    <option value="mpegts">MPEG-TS (MPEG-2 Transport Stream) (*.mpegts)</option>
+                    <option value="mpjpeg">MIME multipart JPEG (*.mpjpeg)</option>
+                    <option value="mulaw">PCM mu-law (*.mulaw)</option>
+                    <option value="mxf">MXF (Material eXchange Format) (*.mxf)</option>
+                    <option value="mxf_d10">MXF (Material eXchange Format) D-10 Mapping (*.mxf_d10)</option>
+                    <option value="mxf_opatom">MXF (Material eXchange Format) Operational Pattern Atom (*.mxf_opatom)</option>
+                    <option value="null">raw null video (*.null)</option>
+                    <option value="nut">NUT (*.nut)</option>
+                    <option value="oga">Ogg Audio (*.oga)</option>
+                    <option value="ogg">Ogg (*.ogg)</option>
+                    <option value="ogv">Ogg Video (*.ogv)</option>
+                    <option value="oma">Sony OpenMG audio (*.oma)</option>
+                    <option value="opus">Ogg Opus (*.opus)</option>
+                    <option value="psp">PSP MP4 (MPEG-4 Part 14) (*.psp)</option>
+                    <option value="r3d">REDCODE R3D (*.r3d)</option>
+                    <option value="rawvideo">raw video (*.rawvideo)</option>
+                    <option value="rm">RealMedia (*.rm)</option>
+                    <option value="roq">raw id RoQ (*.roq)</option>
+                    <option value="rso">Lego Mindstorms RSO (*.rso)</option>
+                    <option value="rtp">RTP output (*.rtp)</option>
+                    <option value="rtp_mpegts">RTP/mpegts output format (*.rtp_mpegts)</option>
+                    <option value="rtsp">RTSP output (*.rtsp)</option>
+                    <option value="s16be">PCM signed 16-bit big-endian (*.s16be)</option>
+                    <option value="s16le">PCM signed 16-bit little-endian (*.s16le)</option>
+                    <option value="s24be">PCM signed 24-bit big-endian (*.s24be)</option>
+                    <option value="s24le">PCM signed 24-bit little-endian (*.s24le)</option>
+                    <option value="s32be">PCM signed 32-bit big-endian (*.s32be)</option>
+                    <option value="s32le">PCM signed 32-bit little-endian (*.s32le)</option>
+                    <option value="s8">PCM signed 8-bit (*.s8)</option>
+                    <option value="sap">SAP output (*.sap)</option>
+                    <option value="segment">segment (*.segment)</option>
+                    <option value="singlejpeg">JPEG single image (*.singlejpeg)</option>
+                    <option value="smjpeg">Loki SDL MJPEG (*.smjpeg)</option>
+                    <option value="smoothstreaming" > Streaming Muxer (*.smoothstreaming)</option>
+                    <option value="sox">SoX native (*.sox)</option>
+                    <option value="spdif">IEC 61937 (used on S/PDIF - IEC958) (*.spdif)</option>
+                    <option value="spx">Ogg Speex (*.spx)</option>
+                    <option value="srt">SubRip subtitle (*.srt)</option>
+                    <option value="stream_segment",> streaming segment muxer (*.stream_segment)</option>
+                    <option value="svcd">MPEG-2 PS (SVCD) (*.svcd)</option>
+                    <option value="swf">SWF (ShockWave Flash) (*.swf)</option>
+                    <option value="tee">Multiple muxer tee (*.tee)</option>
+                    <option value="truehd">raw TrueHD (*.truehd)</option>
+                    <option value="tta">TTA (True Audio) (*.tta)</option>
+                    <option value="u16be">PCM unsigned 16-bit big-endian (*.u16be)</option>
+                    <option value="u16le">PCM unsigned 16-bit little-endian (*.u16le)</option>
+                    <option value="u24be">PCM unsigned 24-bit big-endian (*.u24be)</option>
+                    <option value="u24le">PCM unsigned 24-bit little-endian (*.u24le)</option>
+                    <option value="u32be">PCM unsigned 32-bit big-endian (*.u32be)</option>
+                    <option value="u32le">PCM unsigned 32-bit little-endian (*.u32le)</option>
+                    <option value="u8">PCM unsigned 8-bit (*.u8)</option>
+                    <option value="uncodedframecrc" > framecrc testing (*.uncodedframecrc)</option>
+                    <option value="vc1">raw VC-1 video (*.vc1)</option>
+                    <option value="vc1test">VC-1 test bitstream (*.vc1test)</option>
+                    <option value="vcd">MPEG-1 Systems / MPEG program stream (VCD) (*.vcd)</option>
+                    <option value="vob">MPEG-2 PS (VOB) (*.vob)</option>
+                    <option value="voc">Creative Voice (*.voc)</option>
+                    <option value="w64">Sony Wave64 (*.w64)</option>
+                    <option value="wav">WAV / WAVE (Waveform Audio) (*.wav)</option>
+                    <option value="webm">WebM (*.webm)</option>
+                    <option value="webm_chunk">WebM Chunk Muxer (*.webm_chunk)</option>
+                    <option value="webm_dash_manifest" > DASH Manifest (*.webm_dash_manifest)</option>
+                    <option value="webp">WebP (*.webp)</option>
+                    <option value="webvtt">WebVTT subtitle (*.webvtt)</option>
+                    <option value="wtv">Windows Television (WTV) (*.wtv)</option>
+                    <option value="wv">raw WavPack (*.wv)</option>
+                    <option value="yuv4mpegpipe">YUV4MPEG pipe (*.yuv4mpegpipe)</option>
+                  </select>
+                </div>
+                <div>
+                  <h3>Screen Size</h3>
+                  <ul>
+                    <li class="flex">
+                      <label><input type="radio" name="screen-size" value="predefined" data-restore="custom-ssp" checked="checked">Standard</label>
+
+                      <select data-restore="custom-sspi">
+                        <option value="" selected="selected"> - Ignore - </option>
+                        <optgroup label="Standard 4:3">
+                          <option value="176x144">176x144 Tiny for 3GP</option>
+                          <option value="320x240">320x240 Small - Old YouTube and VCD</option>
+                          <option value="480x360">480x360 Medium - iPhone</option>
+                          <option value="640x480">640x480 VGA - DVD and new YouTube</option>
+                        </optgroup>
+                        <optgroup label="Widescreen 16:9">
+                          <option value="400x224">400x226 Small - Old YouTube</option>
+                          <option value="480x272">480x272 Medium - iPhone</option>
+                          <option value="640x360">640x360 New YouTube (*16)</option>
+                          <option value="640x352">640x352 New YouTube</option>
+                          <option value="852x480">852x480 480p (*16)</option>
+                          <option value="864x480">864x480 480p</option>
+                          <option value="1280x720">1280x720 wide hd 720p</option>
+                          <option value="1920x1080">1920x1080 HD 1080p</option>
+                          <option value="1920x1072">1920x1072 HD 1080p (*16)</option>
+                          <option value="1920x800">1920x800 HD 1080p 2.4:1 Cinema(*16)</option>
+                        </optgroup>
+                      </select>
+                    </li>
+                    <li class="flex">
+                      <label><input type="radio" name="screen-size" value="custom" data-restore="custom-ssc">Custom</label>
+                      <input type="text" data-restore="custom-sscw" placeholder="width">&nbsp;x&nbsp;<input type="text" data-restore="custom-ssch" placeholder="height">
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="flex" id="samples">
+                    <h3 flex="1">Bit-Rate (BR)</h3>
+                    <select data-cmd="fill-sample-values">
+                      <option value="">Clear</option>
+                      <option value="416k,360k,64k">512Kbps</option>
+                      <option value="832k,720k,128k">1Mbps</option>
+                      <option value="1792k,1550k,128k">2Mbps HD</option>
+                    </select>
+                  </div>
+                  <ul>
+                    <li class="flex"><label>Audio bite-rate</label><input type="text" data-restore="custom-oab"></li>
+                    <li class="flex"><label>Video bite-rate</label><input type="text" data-restore="custom-ovb"></li>
+                    <li class="flex"><label>Video BR tolerance</label><input type="text" data-restore="custom-ovt"></li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex">
+          <input type="button" data-cmd="reset-custom" value="Reset to Defaults">
+        </div>
+      </div>
+      <div id="extract">
+        <h2>Audio Extractor</h2>
+        <p>EExtract the original audio stream from a video file. The output format will be based on the audio codec that is used in the input stream. There is no setting for this conversion, just select or drop one or more video files to extract the audio tracks from. You can use the MP3 tab later to convert this audio file to the MP3 format only if you need to use it on a device that does not support the extracted audio format.</p>
+      </div>
+      <div id="muxer">
+        <h2>Video and Audio Combiner</h2>
+        <p>Replace the audio track of a video file with a new audio track. If the video file already has an audio track, this track will be overwritten by the new one. There is no setting for this conversion, just select or drop a pair of a video file and an audio track. This conversion can only convert a single video and audio files at a time. To convert multiple files, drop pairs individually.</p>
+      </div>
+      <div id="concat">
+        <h2>Concatenating media files</h2>
+        <p>Drop multiple media files to combine them into a single media file. Note that the media files need to be in the correct order. If they are not, make sure to rename them in a sequential numbering order first. This tool can be used to combine segmented tracks that are downloaded from popular websites. Choose the right method first, then drop the files. If the input files have the same codec and the same codec parameters, the first method is recommended to prevent re-encoding.</p>
+
+        <label><input type="radio" name="concat" data-restore="concat-1" value="concat-demuxer"> Use "concat demuxer": Use when you want to avoid a re-encode and your format does not support file level concatenation</label>
+        <br>
+        <label><input type="radio" checked="checked" name="concat" data-restore="concat-0" value="concat-protocol"> Use "concat protocol": Use with formats that support file level concatenation (MPEG-1, MPEG-2 PS, DV). Do not use with MP4</label>
+        <br>
+        <label><input type="radio" name="concat" data-restore="concat-2" value="concat-filter"> Use "concat filter": Use only with video files when your inputs do not have the same parameters (width, height, etc), or are not the same formats/codecs</label>
+      </div>
+      <div id="volume">
+        <h2>Audio Volume Adjuster</h2>
+        <p>Reduce or increase the audio volume of a video or audio file. Adjust the range and drop the files in the designated box. To increase the volume more than two times, drop the converted file one more time. Note that this may cause your audio quality to drop.</p>
+
+        Change volume in percent:
+        <div class="flex">
+          <input type="range" min=10 max=200 step=10 flex=1 data-restore="volume-ir" data-append="%" value="100%">
+          <span>100%</span>
+        </div>
+      </div>
+      <div id="scale">
+        <h2>Video Size Scaler</h2>
+        <p>Scale the video screen size. This option can be used to reduce video file size by reducing its screen dimension for instance. Final width of the video will be <code>(original size) * (m) / (d)</code>. Video height is calculated such that width to height ratio is intact. Adjust settings and drop the files into the designated box.</p>
+
+        Divide video screen by:
+        <div class="flex">
+          <input type="range" min=1 max=10 step=1 flex=1 data-restore="scale-id" value=1>
+          <span>1</span>
+        </div>
+        Multiply video screen by:
+        <div class="flex">
+          <input type="range" min=1 max=10 step=1 flex=1 data-restore="scale-im" value=1>
+          <span>1</span>
+        </div>
+      </div>
+      <div id="rotate">
+        <h2>Video Rotator</h2>
+        <p>You can rotate a video file here. This can be helpful to watch a video on a mobile device for instance. Select the rotation value and drop files into the designated box.</p>
+
+        <label><input type="radio" checked="checked" name="rotate" data-restore="rotate-0" value="0"> Rotate video by 90 degrees clockwise and flip vertically</label>
+        <br>
+        <label><input type="radio" name="rotate" data-restore="rotate-1" value="1"> Rotate video by 90 degrees clockwise</label>
+        <br>
+        <label><input type="radio" name="rotate" data-restore="rotate-2" value="2"> Rotate video by 90 degrees counter-clockwise</label>
+        <br>
+        <label><input type="radio" name="rotate" data-restore="rotate-3" value="3"> Rotate video by 90 degrees counter-clockwise and flip vertically</label>
+        <br>
+        <label><input type="radio" name="rotate" data-restore="rotate-4" value="-1"> Rotate video by 180 degrees</label>
+      </div>
+      <div id="shift">
+        <h2>Audio Time Shifter</h2>
+        <p>Sometimes, video and audio tracks are not synced. This tab can shift either audio or video file forward with a defined value to fix the synchronization problem.</p>
+
+        <table>
+          <colgroup>
+            <col width="180">
+          </colgroup>
+          <tr>
+            <td>
+              <label><input type="radio" checked="checked" name="shift" data-restore="shift-iv" value="video"> Shift video forward</label>
+              <br>
+              <label><input type="radio" name="shift" data-restore="shift-ia" value="audio"> Shift audio forward</label>
+            </td>
+            <td><input type="text" data-restore="shift-im" placeholder="hh:mm:ss.m" value="00:00:03.0"></td>
+          </tr>
+        </table>
+      </div>
+      <div id="cut">
+        <h2>Video Cutting Tool</h2>
+        <p>If you want to cut part of a video or an audio file specify "from" time-frame and "to" time-frame and drop the file into the box. Leave the "from" box empty to start from the beginning of the track. Leave the "to" box empty to cut to the last frame. You can use the time offset in seconds from the beginning of the track or you can specify the times in <code>hh:mm:ss.m</code> format.</p>
+
+        Cut the video or audio from
+        <input type="text" data-restore="cut-if" placeholder="hh:mm:ss.m"> to
+        <input type="text" data-restore="cut-it" placeholder="hh:mm:ss.m">
+      </div>
+      <div id="settings" data-selected="true">
+        <h2>Settings</h2>
+        <p>To save a preference, click on the green button next to it. Place your mouse over each item to see the description.</p>
+        <table>
+          <colgroup>
+            <col width=200></col>
+          </colgroup>
+          <tr>
+            <td>Mode</td><td>
+              <select id="mode">
+                <option value="wasm">WASM</option>
+                <option value="native">Native Client</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p>WASM mode (experimental): In this mode, there is no need for the native FFmpeg. The extension uses the embedded FFmpeg compiled into JS. This mode does not require any permission to operate but it is only recommended for light conversions. If the conversion window crashed, please switch to the native mode.</p>
+              <p>Native Client: In this mode, you need to permit the extension to use the native client also you need to install the native client. The extension uses the native FFmpeg binary to perform your conversions. This mode is recommended if you plan to do the conversion on large files.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>Native client</td><td id="client-version">...</td>
+          </tr>
+          <tr>
+            <td>FFmpeg Location</td>
+            <td class="flex">
+              <input type="text" id="ffmpeg-path" placeholder="absolute path to FFmpeg executable" flex=1 data-pref="ffmpeg-path" title="Absolute path to FFmpeg executable">
+              <input type="button" value="&#x2713;" disabled="true" data-cmd="save-preference" title="When the color is green click here to save the preference">
+            </td>
+          </tr>
+          <tr>
+            <td>Save Files In</td>
+            <td class="flex">
+              <input type="text" id="save-in" placeholder="absolute path to the storage directory" flex=1 data-pref="savein-path" title="Save converted files in this folder">
+              <input type="button" value="&#x2713;" disabled="true" data-cmd="save-preference" title="When the color is green click here to save the preference">
+            </td>
+          </tr>
+          <tr>
+            <td>Temporary Directory</td>
+            <td class="flex">
+              <input type="text" id="tmpdir" placeholder="absolute path to the temporay directory" flex=1 data-pref="tmpdir-path" title="Absolute path to a temporay directory that is used for conversion">
+              <input type="button" value="&#x2713;" disabled="true" data-cmd="save-preference" title="When the color is green click here to save the preference">
+            </td>
+          </tr>
+          <tr>
+            <td>Local communication port</td>
+            <td class="flex">
+              <input type="text" id="port" placeholder="port number" flex=1 data-pref="server-port" title="Only change the port if you are using the converter on multiple profiles or different browsers">
+              <input type="button" value="&#x2713;" disabled="true" data-cmd="save-preference" title="When the color is green click here to save the preference">
+            </td>
+          </tr>
+          <tr>
+            <td>Update native client</td>
+            <td><input type="button" value="Update or Install" data-cmd="update-native-client"></td>
+          </tr>
+          <tr>
+            <td>Update FFmpeg converter</td>
+            <td><input type="button" value="Update or Install" data-cmd="update-ffmpeg"></td>
+          </tr>
+          <tr>
+            <td>Terminate all jobs</td>
+            <td><input type="button" value="Restart" data-cmd="restart"></td>
+          </tr>
+          <tr>
+            <td>Support development</td>
+            <td><input type="button" value="Support Development" data-cmd="support"></td>
+          </tr>
+          <tr>
+            <td>Reset all settings</td>
+            <td><input type="button" value="Factory Reset" data-cmd="reset"></td>
+          </tr>
+        </table>
+      </div>
+      <div id="upload">
+        <label><b>Choose files</b><input type="file" multiple></label>&nbsp; or drag them here
+      </div>
+    </div>
+  </div>
+  <div id="console"></div>
+
+  <script src="utils.js"></script>
+  <script src="ui.js"></script>
+  <script src="native/core.js"></script>
+  <script src="native/ffmpeg.js"></script>
+  <script src="wasm/ffmpeg.js"></script>
+  <script src="element.js"></script>
+  <script src="log.js"></script>
+  <script src="file.js"></script>
+  <script src="ffmpeg.js"></script>
+  <script src="restore.js"></script>
+  <script src="misc.js"></script>
+  <script async src="matched/matched.js"></script>
+</body>
+</html>
